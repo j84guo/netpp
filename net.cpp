@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include <cstdio>
+#include <cstddef>
 #include <cstring>
 #include <unistd.h>
 
@@ -50,8 +51,12 @@ class TcpConn
 public:
 	TcpConn(const string &ip, const string &port);
 	~TcpConn();
-	int recv(char *buf, int num);
-	int send(const char *buf, int num);
+
+	ssize_t recv(char *buf, size_t num);
+	ssize_t send(const char *buf, size_t num);
+	
+	bool recvAll(vector<char> &buf);
+	bool sendAll(const char *buf, size_t num);
 
 private:
 	bool init(vector<struct addrinfo> &res);
@@ -89,37 +94,63 @@ TcpConn::~TcpConn()
 	close(sockDes);
 }
 
-int TcpConn::recv(char *buf, int num)
+ssize_t TcpConn::recv(char *buf, size_t num)
 {
 	return ::recv(sockDes, buf, num, 0);
 }
 
-int TcpConn::send(const char *buf, int num)
+/* recv until connection close */
+bool TcpConn::recvAll(vector<char> &buf)
+{
+	ssize_t ret;
+	size_t num = 0, recv_size = 1024;
+
+	while (1) {
+		if (num + recv_size > buf.size())
+			buf.resize(buf.size() + recv_size);
+		ret = ::recv(sockDes, &buf[num], recv_size, 0);
+		if (ret == -1)
+			return false;
+		else if (!ret)
+			break;
+		num += ret;
+	}
+
+	return true;
+}
+
+ssize_t TcpConn::send(const char *buf, size_t num)
 {
 	return ::send(sockDes, buf, num, 0);
+}
+
+/* send all bytes from buffer */
+bool TcpConn::sendAll(const char *buf, size_t toSend)
+{
+	size_t num = 0;
+	ssize_t ret;
+
+	while (num < toSend) {
+		ret = ::send(sockDes, buf, toSend - num, 0);
+		if (ret == -1)
+			return false;
+		num += ret;
+	}
+
+	return true;
 }
 
 bool demo()
 {
 	TcpConn conn("google.ca", "80");
+
 	string req = "GET / HTTP/1.0\r\n\r\n";
-	conn.send(req.c_str(), req.size());
+	conn.sendAll(req.c_str(), req.size());
 
-	int num = 0, res;
-	vector<char> buf(65535);
+	vector<char> buf;
+	conn.recvAll(buf);
 
-	while (num < buf.size()) {
-		res = conn.recv(&buf[num], buf.size() - num);
-		if (res == -1) {
-			perror("recv");
-			return false;
-		} else if (!res) {
-			break;
-		}
-		num += res;
-	}
-
-	cout << string(buf.begin(), buf.begin() + num);
+	cout << string(buf.begin(), buf.end()) << '\n';
 	return true;
 }
 
