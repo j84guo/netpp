@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstddef>
 #include <cstring>
+#include <errno.h>
 #include <unistd.h>
 
 #include <netdb.h>
@@ -15,10 +16,27 @@
 
 using namespace std;
 
+string strError(int err)
+{
+	char buf[128] = {0}, *ptr = nullptr;
+#if defined(__GLIBC__) && defined(_GNU_SOURCE)                             
+	ptr = strerror_r(err, buf, sizeof(buf) - 1);                  
+#else
+	strerror_r(err, buf, sizeof(buf) - 1);      
+	ptr = buf;              
+#endif
+	return ptr;
+}
+
 class NetError : public runtime_error
 {
 public:
-	NetError(const string &msg): runtime_error(msg) { }
+	NetError(const string &msg):
+		runtime_error(msg) { }
+	NetError(int err):
+		runtime_error(strError(err)) { }
+	NetError(const string &prefix, int err):
+		runtime_error(prefix + ": " + strError(err)) { }
 };
 
 void lookupHints(struct addrinfo &hints)
@@ -81,9 +99,9 @@ TcpConn::TcpConn(const string &host, const string &port):
 {
 	vector<struct addrinfo> res;
 	if (!lookupHost(host, port, res))
-		throw NetError("Bad host.");
+		throw NetError("TcpConn", errno);
 	if (!init(res))
-		throw NetError("Could not connect.");
+		throw NetError("TcpConn", errno);
 }
 
 TcpConn::~TcpConn()
@@ -148,5 +166,14 @@ bool demo()
 
 int main()
 {
-	return demo() ? 0 : 1;
+	int status = 0;
+
+	try {
+		demo();
+	} catch (NetError &e) {
+		status = 1;
+		cerr << e.what() << '\n';
+	}
+
+	return status;
 }
