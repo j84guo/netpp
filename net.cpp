@@ -62,11 +62,11 @@ bool lookupHost(const string &host, const string &port, vector<struct addrinfo> 
 	return true;
 }
 
-class TcpConn
+class TCPConn
 {
 public:
-	TcpConn(const string &ip, const string &port);
-	~TcpConn();
+	TCPConn(const string &ip, const string &port);
+	~TCPConn();
 
 	ssize_t recv(char *buf, size_t num);
 	ssize_t send(const char *buf, size_t num);
@@ -79,7 +79,7 @@ private:
 	int sockDes;
 };
 
-bool TcpConn::init(vector<struct addrinfo> &res)
+bool TCPConn::init(vector<struct addrinfo> &res)
 {
 	for (const auto &info : res) {
 		sockDes = socket(info.ai_family, info.ai_socktype, info.ai_protocol);
@@ -94,28 +94,28 @@ bool TcpConn::init(vector<struct addrinfo> &res)
 	return false;
 }
 
-TcpConn::TcpConn(const string &host, const string &port):
+TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
 	vector<struct addrinfo> res;
 	if (!lookupHost(host, port, res))
-		throw NetError("TcpConn", errno);
+		throw NetError("TCPConn", errno);
 	if (!init(res))
-		throw NetError("TcpConn", errno);
+		throw NetError("TCPConn", errno);
 }
 
-TcpConn::~TcpConn()
+TCPConn::~TCPConn()
 {
 	close(sockDes);
 }
 
-ssize_t TcpConn::recv(char *buf, size_t num)
+ssize_t TCPConn::recv(char *buf, size_t num)
 {
 	return ::recv(sockDes, buf, num, 0);
 }
 
 /* recv until connection close */
-bool TcpConn::recvAll(vector<char> &buf)
+bool TCPConn::recvAll(vector<char> &buf)
 {
 	ssize_t ret;
 	size_t num = 0, recv_size = 1024;
@@ -135,13 +135,13 @@ bool TcpConn::recvAll(vector<char> &buf)
 	return true;
 }
 
-ssize_t TcpConn::send(const char *buf, size_t num)
+ssize_t TCPConn::send(const char *buf, size_t num)
 {
 	return ::send(sockDes, buf, num, 0);
 }
 
 /* send all bytes from buffer */
-bool TcpConn::sendAll(const char *buf, size_t toSend)
+bool TCPConn::sendAll(const char *buf, size_t toSend)
 {
 	size_t num = 0;
 	ssize_t ret;
@@ -159,7 +159,7 @@ bool TcpConn::sendAll(const char *buf, size_t toSend)
 
 bool demo()
 {
-	TcpConn conn("google.ca", "80");
+	TCPConn conn("google.ca", "80");
 	string req = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 	conn.sendAll(req.c_str(), req.size());
 
@@ -170,6 +170,11 @@ bool demo()
 	return true;
 }
 
+/* Todo: Use a reader/writer interface instead of recv/send, that way buffered
+         	wrappers/scanners can easily be made?
+		 Also add socket options like non-blocking, timeout, etc.
+		 How to select/poll on multiple TCPConns
+		 Add UDPConn */
 int main()
 {
 	int status = 0;
