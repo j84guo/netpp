@@ -15,14 +15,13 @@
 
 using namespace std;
 
-class NetError
+class NetError : public runtime_error
 {
 public:
-	NetError(const string &msg): msg(msg) {}
-	const string msg;
+	NetError(const string &msg): runtime_error(msg) { }
 };
 
-void setLookupHints(struct addrinfo &hints)
+void lookupHints(struct addrinfo &hints)
 {
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_UNSPEC;
@@ -33,12 +32,11 @@ void setLookupHints(struct addrinfo &hints)
 bool lookupHost(const string &host, const string &port, vector<struct addrinfo> &res)
 {
 	struct addrinfo hints;
-	setLookupHints(hints);
+	lookupHints(hints);
 
 	struct addrinfo* info;
 	if (getaddrinfo(host.c_str(), port.c_str(), &hints, &info))
 		return false;
-
 	for (struct addrinfo *ptr = info; ptr; ptr = ptr->ai_next)
 		res.emplace_back(*ptr);
 
@@ -84,7 +82,6 @@ TcpConn::TcpConn(const string &host, const string &port):
 	vector<struct addrinfo> res;
 	if (!lookupHost(host, port, res))
 		throw NetError("Bad host.");
-
 	if (!init(res))
 		throw NetError("Could not connect.");
 }
@@ -104,7 +101,6 @@ bool TcpConn::recvAll(vector<char> &buf)
 {
 	ssize_t ret;
 	size_t num = 0, recv_size = 1024;
-
 	while (1) {
 		if (num + recv_size > buf.size())
 			buf.resize(buf.size() + recv_size);
@@ -115,7 +111,6 @@ bool TcpConn::recvAll(vector<char> &buf)
 			break;
 		num += ret;
 	}
-
 	return true;
 }
 
@@ -129,14 +124,12 @@ bool TcpConn::sendAll(const char *buf, size_t toSend)
 {
 	size_t num = 0;
 	ssize_t ret;
-
 	while (num < toSend) {
 		ret = ::send(sockDes, buf, toSend - num, 0);
 		if (ret == -1)
 			return false;
 		num += ret;
 	}
-
 	return true;
 }
 
@@ -149,6 +142,7 @@ bool demo()
 	vector<char> buf;
 	conn.recvAll(buf);
 	cout << string(buf.begin(), buf.end()) << '\n';
+
 	return true;
 }
 
