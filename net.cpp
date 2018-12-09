@@ -155,17 +155,15 @@ bool TCPConn::sendAll(const char *buf, size_t toSend)
 	return true;
 }
 
-bool demo()
+void demo(const string &host, const string &port)
 {
-	TCPConn conn("google.ca", "80");
+	TCPConn conn(host, port);
 	string req = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 	conn.sendAll(req.c_str(), req.size());
 
 	vector<char> buf;
 	conn.recvAll(buf);
-	cout << string(buf.begin(), buf.end()) << '\n';
-
-	return true;
+	cout << string(buf.begin(), buf.end());
 }
 
 /* Todo: Use a reader/writer interface instead of recv/send, that way buffered
@@ -173,16 +171,19 @@ bool demo()
 		 Also add socket options like non-blocking, timeout, etc.
 		 How to select/poll on multiple TCPConns
 		 Add UDPConn */
-int main()
+int main(int argc, char *argv[])
 {
-	int status = 0;
-
-	try {
-		demo();
-	} catch (NetError &e) {
-		status = 1;
-		cerr << e.what() << '\n';
+	if (argc != 3) {
+		cerr << "Usage: " << argv[0] << " <host> <port>\n";
+		return 1;
 	}
 
-	return status;
+	try {
+		demo(argv[1], argv[2]);
+	} catch (NetError &e) {
+		cerr << e.what() << '\n';
+		return 1;
+	}
+
+	return 0;
 }
