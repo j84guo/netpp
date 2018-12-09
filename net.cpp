@@ -117,12 +117,11 @@ ssize_t TCPConn::recv(char *buf, size_t num)
 /* recv until connection close */
 bool TCPConn::recvAll(vector<char> &buf)
 {
-	ssize_t ret;
-	size_t num = 0, recv_size = 1024;
+	size_t num = 0, RECV_SIZE = 4096;
 	while (1) {
-		if (num + recv_size > buf.size())
-			buf.resize(buf.size() + recv_size);
-		ret = ::recv(sockDes, &buf[num], recv_size, 0);
+		if (num + RECV_SIZE > buf.size())
+			buf.resize(buf.size() + RECV_SIZE);
+		ssize_t ret = ::recv(sockDes, &buf[num], RECV_SIZE, 0);
 		if (ret == -1) {
 			if (errno == EINTR)
 				continue;
@@ -144,9 +143,8 @@ ssize_t TCPConn::send(const char *buf, size_t num)
 bool TCPConn::sendAll(const char *buf, size_t toSend)
 {
 	size_t num = 0;
-	ssize_t ret;
 	while (num < toSend) {
-		ret = ::send(sockDes, buf, toSend - num, 0);
+		ssize_t ret = ::send(sockDes, buf, toSend - num, 0);
 		if (ret == -1) {
 			if (errno == EINTR)
 				continue;
