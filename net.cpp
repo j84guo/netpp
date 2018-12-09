@@ -143,13 +143,11 @@ bool TcpConn::sendAll(const char *buf, size_t toSend)
 bool demo()
 {
 	TcpConn conn("google.ca", "80");
-
 	string req = "GET / HTTP/1.0\r\n\r\n";
 	conn.sendAll(req.c_str(), req.size());
 
 	vector<char> buf;
 	conn.recvAll(buf);
-
 	cout << string(buf.begin(), buf.end()) << '\n';
 	return true;
 }
