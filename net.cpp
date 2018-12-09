@@ -123,10 +123,13 @@ bool TcpConn::recvAll(vector<char> &buf)
 		if (num + recv_size > buf.size())
 			buf.resize(buf.size() + recv_size);
 		ret = ::recv(sockDes, &buf[num], recv_size, 0);
-		if (ret == -1)
+		if (ret == -1) {
+			if (errno == EINTR)
+				continue;
 			return false;
-		else if (!ret)
+		} else if (!ret) {
 			break;
+		}
 		num += ret;
 	}
 	return true;
@@ -144,8 +147,11 @@ bool TcpConn::sendAll(const char *buf, size_t toSend)
 	ssize_t ret;
 	while (num < toSend) {
 		ret = ::send(sockDes, buf, toSend - num, 0);
-		if (ret == -1)
+		if (ret == -1) {
+			if (errno == EINTR)
+				continue;
 			return false;
+		}
 		num += ret;
 	}
 	return true;
