@@ -170,7 +170,8 @@ void demo(const string &host, const string &port)
          	wrappers/scanners can easily be made?
 		 Also add socket options like non-blocking, timeout, etc.
 		 How to select/poll on multiple TCPConns
-		 Add UDPConn */
+		 Add UDPConn
+         Throw exception from within lookupHost and init... */
 int main(int argc, char *argv[])
 {
 	if (argc != 3) {
