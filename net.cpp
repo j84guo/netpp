@@ -100,7 +100,7 @@ TCPConn::TCPConn(const string &host, const string &port):
 {
 	vector<struct addrinfo> res;
 	if (!lookupHost(host, port, res))
-		throw NetError("TCPConn: Bad hostname " + host);
+		throw NetError("TCPConn: Could not get host info " + host);
 	if (!init(res))
 		throw NetError("TCPConn", errno);
 }
