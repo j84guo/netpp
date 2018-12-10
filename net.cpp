@@ -74,8 +74,8 @@ public:
 	ssize_t recv(char *buf, size_t num);
 	ssize_t send(const char *buf, size_t num);
 	
-	bool recvAll(vector<char> &buf);
-	bool sendAll(const char *buf, size_t num);
+	ssize_t recvAll(vector<char> &buf);
+	ssize_t sendAll(const char *buf, size_t num);
 
 private:
 	void initConn(vector<struct addrinfo> &infoVec);
@@ -116,7 +116,7 @@ ssize_t TCPConn::recv(char *buf, size_t num)
 }
 
 /* recv until connection close */
-bool TCPConn::recvAll(vector<char> &buf)
+ssize_t TCPConn::recvAll(vector<char> &buf)
 {
 	size_t num = 0, RECV_SIZE = 4096;
 	while (1) {
@@ -126,13 +126,13 @@ bool TCPConn::recvAll(vector<char> &buf)
 		if (ret == -1) {
 			if (errno == EINTR)
 				continue;
-			return false;
+			return -1;
 		} else if (!ret) {
 			break;
 		}
 		num += ret;
 	}
-	return true;
+	return num;
 }
 
 ssize_t TCPConn::send(const char *buf, size_t num)
@@ -141,7 +141,7 @@ ssize_t TCPConn::send(const char *buf, size_t num)
 }
 
 /* send all bytes from buffer */
-bool TCPConn::sendAll(const char *buf, size_t toSend)
+ssize_t TCPConn::sendAll(const char *buf, size_t toSend)
 {
 	size_t num = 0;
 	while (num < toSend) {
@@ -149,11 +149,11 @@ bool TCPConn::sendAll(const char *buf, size_t toSend)
 		if (ret == -1) {
 			if (errno == EINTR)
 				continue;
-			return false;
+			return -1;
 		}
 		num += ret;
 	}
-	return true;
+	return num;
 }
 
 void demo(const string &host, const string &port)
@@ -163,8 +163,8 @@ void demo(const string &host, const string &port)
 	conn.sendAll(req.c_str(), req.size());
 
 	vector<char> buf;
-	conn.recvAll(buf);
-	cout << string(buf.begin(), buf.end());
+	ssize_t num = conn.recvAll(buf);
+	cout << string(buf.begin(), buf.begin() + num);
 }
 
 /* Todo: Use a reader/writer interface instead of recv/send, that way buffered
