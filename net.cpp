@@ -39,19 +39,20 @@ public:
 		runtime_error(prefix + ": " + strError(err)) { }
 };
 
-void lookupHints(struct addrinfo &hints)
+struct addrinfo lookupHints()
 {
+	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
+	return hints;
 }
 
 /* throws NetError on getaddrinfo failure */
 vector<struct addrinfo> lookupHost(const string &host, const string &port)
 {
-	struct addrinfo hints;
-	lookupHints(hints);
+	struct addrinfo hints = lookupHints();
 
 	vector<struct addrinfo> infoVec;
 	struct addrinfo* info;
