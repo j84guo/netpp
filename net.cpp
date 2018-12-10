@@ -49,7 +49,7 @@ void lookupHints(struct addrinfo &hints)
 
 /* throws NetError on getaddrinfo failure */
 void lookupHost(const string &host, const string &port,
-		vector<struct addrinfo> &res)
+		vector<struct addrinfo> &infoVec)
 {
 	struct addrinfo hints;
 	lookupHints(hints);
@@ -59,7 +59,7 @@ void lookupHost(const string &host, const string &port,
 	if (ret)
 		throw NetError(string("lookupHost: ") + gai_strerror(ret));
 	for (struct addrinfo *ptr = info; ptr; ptr = ptr->ai_next)
-		res.emplace_back(*ptr);
+		infoVec.emplace_back(*ptr);
 
 	freeaddrinfo(info);
 }
