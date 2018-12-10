@@ -77,14 +77,14 @@ public:
 	bool sendAll(const char *buf, size_t num);
 
 private:
-	void initConn(vector<struct addrinfo> &infoList);
+	void initConn(vector<struct addrinfo> &infoVec);
 	int sockDes;
 };
 
 /* throws NetError if all connection attempts fail */
-void TCPConn::initConn(vector<struct addrinfo> &infoList)
+void TCPConn::initConn(vector<struct addrinfo> &infoVec)
 {
-	for (const auto &info : infoList) {
+	for (const auto &info : infoVec) {
 		sockDes = socket(info.ai_family, info.ai_socktype, info.ai_protocol);
 		if (sockDes == -1)
 			continue;
@@ -100,9 +100,9 @@ void TCPConn::initConn(vector<struct addrinfo> &infoList)
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
-	vector<struct addrinfo> infoList;
-	lookupHost(host, port, infoList);
-	initConn(infoList);
+	vector<struct addrinfo> infoVec;
+	lookupHost(host, port, infoVec);
+	initConn(infoVec);
 }
 
 TCPConn::~TCPConn()
