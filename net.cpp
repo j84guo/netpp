@@ -47,20 +47,21 @@ void lookupHints(struct addrinfo &hints)
 	hints.ai_protocol = IPPROTO_TCP;
 }
 
-bool lookupHost(const string &host, const string &port,
+/* throws NetError on getaddrinfo failure */
+void lookupHost(const string &host, const string &port,
 		vector<struct addrinfo> &res)
 {
 	struct addrinfo hints;
 	lookupHints(hints);
 
 	struct addrinfo* info;
-	if (getaddrinfo(host.c_str(), port.c_str(), &hints, &info))
-		return false;
+	int ret = getaddrinfo(host.c_str(), port.c_str(), &hints, &info);
+	if (ret)
+		throw NetError(string("lookupHost: ") + gai_strerror(ret));
 	for (struct addrinfo *ptr = info; ptr; ptr = ptr->ai_next)
 		res.emplace_back(*ptr);
 
 	freeaddrinfo(info);
-	return true;
 }
 
 class TCPConn
@@ -76,13 +77,14 @@ public:
 	bool sendAll(const char *buf, size_t num);
 
 private:
-	bool init(vector<struct addrinfo> &res);
+	void initConn(vector<struct addrinfo> &infov);
 	int sockDes;
 };
 
-bool TCPConn::init(vector<struct addrinfo> &res)
+/* throws NetError if all connection attempts fail */
+void TCPConn::initConn(vector<struct addrinfo> &infov)
 {
-	for (const auto &info : res) {
+	for (const auto &info : infov) {
 		sockDes = socket(info.ai_family, info.ai_socktype, info.ai_protocol);
 		if (sockDes == -1)
 			continue;
@@ -90,19 +92,17 @@ bool TCPConn::init(vector<struct addrinfo> &res)
 			close(sockDes);
 			continue;
 		}
-		return true;
+		return;
 	}
-	return false;
+	throw NetError("initConn", errno);
 }
 
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
-	vector<struct addrinfo> res;
-	if (!lookupHost(host, port, res))
-		throw NetError("TCPConn: Could not get host info " + host);
-	if (!init(res))
-		throw NetError("TCPConn", errno);
+	vector<struct addrinfo> infov;
+	lookupHost(host, port, infov);
+	initConn(infov);
 }
 
 TCPConn::~TCPConn()
