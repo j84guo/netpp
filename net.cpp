@@ -48,20 +48,21 @@ void lookupHints(struct addrinfo &hints)
 }
 
 /* throws NetError on getaddrinfo failure */
-void lookupHost(const string &host, const string &port,
-		vector<struct addrinfo> &infoVec)
+vector<struct addrinfo> lookupHost(const string &host, const string &port)
 {
 	struct addrinfo hints;
 	lookupHints(hints);
 
+	vector<struct addrinfo> infoVec;
 	struct addrinfo* info;
 	int ret = getaddrinfo(host.c_str(), port.c_str(), &hints, &info);
 	if (ret)
 		throw NetError(string("lookupHost: ") + gai_strerror(ret));
 	for (struct addrinfo *ptr = info; ptr; ptr = ptr->ai_next)
-		infoVec.emplace_back(*ptr);
+		infoVec.push_back(*ptr);
 
 	freeaddrinfo(info);
+	return infoVec;
 }
 
 class TCPConn
@@ -100,8 +101,7 @@ void TCPConn::initConn(vector<struct addrinfo> &infoVec)
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
-	vector<struct addrinfo> infoVec;
-	lookupHost(host, port, infoVec);
+	auto infoVec = lookupHost(host, port);
 	initConn(infoVec);
 }
 
