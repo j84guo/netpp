@@ -47,7 +47,8 @@ void lookupHints(struct addrinfo &hints)
 	hints.ai_protocol = IPPROTO_TCP;
 }
 
-bool lookupHost(const string &host, const string &port, vector<struct addrinfo> &res)
+bool lookupHost(const string &host, const string &port,
+		vector<struct addrinfo> &res)
 {
 	struct addrinfo hints;
 	lookupHints(hints);
@@ -99,7 +100,7 @@ TCPConn::TCPConn(const string &host, const string &port):
 {
 	vector<struct addrinfo> res;
 	if (!lookupHost(host, port, res))
-		throw NetError("TCPConn", errno);
+		throw NetError("TCPConn: Bad hostname " + host);
 	if (!init(res))
 		throw NetError("TCPConn", errno);
 }
