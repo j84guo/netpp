@@ -237,7 +237,7 @@ void demo(const string &host, const string &port)
 	ssize_t num = conn.recvAll(buf);
 	cout << string(buf.begin(), buf.begin() + num);
 
-	SockAddr sa;
+	SockAddr sa = conn.remoteAddr();
 	cout << sa.getFamily() << ' ' << sa.getPort() << ' ' << sa.getIP();
 }
 
