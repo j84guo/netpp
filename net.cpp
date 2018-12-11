@@ -117,11 +117,13 @@ string SockAddr::getIP()
 	int fam = getFamily();
 	char buf[INET6_ADDRSTRLEN] = {0};
 
-	void *addr = nullptr;
+	void *addr;
 	if (fam == AF_INET)
 		addr = (void *) &((struct sockaddr_in *) &sa)->sin_addr;
 	else if (fam == AF_INET6)
 		addr = (void *) &((struct sockaddr_in6 *) &sa)->sin6_addr;
+	else
+		return buf;
 
 	inet_ntop(fam, addr, buf, sizeof(buf));
 	return buf;	
