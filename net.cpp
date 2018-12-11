@@ -39,7 +39,7 @@ public:
 		runtime_error(prefix + ": " + strError(err)) { }
 };
 
-struct addrinfo lookupHints()
+struct addrinfo addrInfoHints()
 {
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -50,9 +50,9 @@ struct addrinfo lookupHints()
 }
 
 /* throws NetError on getaddrinfo failure */
-vector<struct addrinfo> lookupHost(const string &host, const string &port)
+vector<struct addrinfo> getAddrInfo(const string &host, const string &port)
 {
-	struct addrinfo hints = lookupHints();
+	struct addrinfo hints = addrInfoHints();
 	vector<struct addrinfo> infoVec;
 
 	struct addrinfo* info;
@@ -66,6 +66,71 @@ vector<struct addrinfo> lookupHost(const string &host, const string &port)
 	return infoVec;
 }
 
+class SockAddr
+{
+public:
+	SockAddr();
+	SockAddr(struct sockaddr_storage &from, socklen_t saLen);
+
+	string getIp();
+	int getFamily();
+	int getPort();
+	struct sockaddr *getPtr();
+
+private:
+	string ip;
+	struct sockaddr_storage sa;
+	socklen_t saLen;
+};
+
+SockAddr::SockAddr()
+{
+	saLen = sizeof(struct sockaddr_storage);
+	memset(&sa, 0, sizeof(saLen));
+	sa.ss_family = AF_UNSPEC;
+}
+
+SockAddr::SockAddr(struct sockaddr_storage &sa, socklen_t saLen):
+	sa(sa),
+	saLen(saLen)
+{ }
+
+int SockAddr::getFamily()
+{
+	return sa.ss_family;
+}
+
+int SockAddr::getPort()
+{
+	switch (getFamily()) {
+		case AF_INET:
+			return ntohs(((struct sockaddr_in *) &sa)->sin_port);
+		case AF_INET6:
+			return ntohs(((struct sockaddr_in6 *) &sa)->sin6_port);
+		default:
+			return -1;
+	}
+}
+
+string SockAddr::getIp()
+{
+	int fam = getFamily();
+	void *addr;
+	if (fam == AF_INET)
+		addr = (void *) &((struct sockaddr_in *) &sa)->sin_addr;
+	else if (fam == AF_INET6)
+		addr = (void *) &((struct sockaddr_in6 *) &sa)->sin6_addr;
+	
+	char buf[INET6_ADDRSTRLEN] = {0};
+	inet_ntop(fam, addr, buf, sizeof(buf));
+	return buf;	
+}
+
+struct sockaddr *SockAddr::getPtr()
+{
+	return (struct sockaddr *) &sa;
+}
+
 class TCPConn
 {
 public:
@@ -77,10 +142,18 @@ public:
 	ssize_t recvAll(vector<char> &buf);
 	ssize_t sendAll(const char *buf, size_t num);
 
+	SockAddr remoteAddr();
+
 private:
 	void connectWithFirst(vector<struct addrinfo> &infoVec);
 	int sockDes;
+	SockAddr remote;
 };
+
+SockAddr TCPConn::remoteAddr()
+{
+	return remote;
+}
 
 /* throws NetError if all connection attempts fail */
 void TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
@@ -93,6 +166,8 @@ void TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 			close(sockDes);
 			continue;
 		}
+		remote = SockAddr(*((struct sockaddr_storage *) info.ai_addr),
+				info.ai_addrlen);
 		return;
 	}
 	throw NetError("initConn", errno);
@@ -101,7 +176,7 @@ void TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
-	vector<struct addrinfo> infoVec = lookupHost(host, port);
+	vector<struct addrinfo> infoVec = getAddrInfo(host, port);
 	connectWithFirst(infoVec);
 }
 
@@ -169,12 +244,13 @@ void demo(const string &host, const string &port)
 
 /**
  * Todo:
+ * How to move TCPConn objects without closing fd
+ * Constructor accepting an fd for server accept()
  * Use a reader/writer interface instead of recv/send, that way buffered
  * wrappers/scanners can easily be made?
- * Also add socket options like non-blocking, timeout, etc.
+ * Socket options like non-blocking, timeout
  * How to select/poll on multiple TCPConns
- * Add UDPConn
- * Throw exception from within lookupHost and init...
+ * Return std::pair instead of throwing
  */
 int main(int argc, char *argv[])
 {
