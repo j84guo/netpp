@@ -122,8 +122,6 @@ string SockAddr::getIP()
 		addr = (void *) &((struct sockaddr_in *) &sa)->sin_addr;
 	else if (fam == AF_INET6)
 		addr = (void *) &((struct sockaddr_in6 *) &sa)->sin6_addr;
-	else
-		return buf;	
 
 	inet_ntop(fam, addr, buf, sizeof(buf));
 	return buf;	
@@ -181,7 +179,6 @@ TCPConn::TCPConn(const string &host, const string &port):
 {
 	vector<struct addrinfo> infoVec = getAddrInfo(host, port);
 	connectWithFirst(infoVec);
-	cout << "connected\n";
 }
 
 TCPConn::~TCPConn()
