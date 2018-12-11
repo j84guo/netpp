@@ -72,7 +72,7 @@ public:
 	SockAddr();
 	SockAddr(struct sockaddr_storage &from, socklen_t saLen);
 
-	string getIp();
+	string getIP();
 	int getFamily();
 	int getPort();
 	struct sockaddr *getPtr();
@@ -84,11 +84,7 @@ private:
 };
 
 SockAddr::SockAddr()
-{
-	saLen = sizeof(struct sockaddr_storage);
-	memset(&sa, 0, sizeof(saLen));
-	sa.ss_family = AF_UNSPEC;
-}
+{ }
 
 SockAddr::SockAddr(struct sockaddr_storage &sa, socklen_t saLen):
 	sa(sa),
@@ -112,7 +108,7 @@ int SockAddr::getPort()
 	}
 }
 
-string SockAddr::getIp()
+string SockAddr::getIP()
 {
 	int fam = getFamily();
 	void *addr;
@@ -240,17 +236,21 @@ void demo(const string &host, const string &port)
 	vector<char> buf;
 	ssize_t num = conn.recvAll(buf);
 	cout << string(buf.begin(), buf.begin() + num);
+
+	SockAddr sa;
+	cout << sa.getFamily() << ' ' << sa.getPort() << ' ' << sa.getIP();
 }
 
 /**
  * Todo:
- * How to move TCPConn objects without closing fd
- * Constructor accepting an fd for server accept()
- * Use a reader/writer interface instead of recv/send, that way buffered
- * wrappers/scanners can easily be made?
- * Socket options like non-blocking, timeout
- * How to select/poll on multiple TCPConns
- * Return std::pair instead of throwing
+ * - How to move TCPConn objects without closing fd
+ * - Constructor accepting an fd for server accept()
+ * - Use a reader/writer interface instead of recv/send, that way buffered
+ *   wrappers/scanners can easily be made?
+ * - Socket options like non-blocking, timeout
+ * - How to select/poll on multiple TCPConns
+ * - Return std::pair instead of throwing
+ * - Improve SockAddr
  */
 int main(int argc, char *argv[])
 {
