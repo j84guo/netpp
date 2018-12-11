@@ -84,7 +84,11 @@ private:
 };
 
 SockAddr::SockAddr()
-{ }
+{
+	saLen = sizeof(struct sockaddr_storage);
+	memset(&sa, 0, saLen);
+	sa.ss_family = AF_UNSPEC;
+}
 
 SockAddr::SockAddr(struct sockaddr_storage &sa, socklen_t saLen):
 	sa(sa),
@@ -174,6 +178,7 @@ TCPConn::TCPConn(const string &host, const string &port):
 {
 	vector<struct addrinfo> infoVec = getAddrInfo(host, port);
 	connectWithFirst(infoVec);
+	cout << "connected\n";
 }
 
 TCPConn::~TCPConn()
