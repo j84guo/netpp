@@ -53,8 +53,8 @@ struct addrinfo lookupHints()
 vector<struct addrinfo> lookupHost(const string &host, const string &port)
 {
 	struct addrinfo hints = lookupHints();
-
 	vector<struct addrinfo> infoVec;
+
 	struct addrinfo* info;
 	int ret = getaddrinfo(host.c_str(), port.c_str(), &hints, &info);
 	if (ret)
@@ -73,18 +73,17 @@ public:
 	~TCPConn();
 
 	ssize_t recv(char *buf, size_t num);
-	ssize_t send(const char *buf, size_t num);
-	
+	ssize_t send(const char *buf, size_t num);	
 	ssize_t recvAll(vector<char> &buf);
 	ssize_t sendAll(const char *buf, size_t num);
 
 private:
-	void initConn(vector<struct addrinfo> &infoVec);
+	void connectWithFirst(vector<struct addrinfo> &infoVec);
 	int sockDes;
 };
 
 /* throws NetError if all connection attempts fail */
-void TCPConn::initConn(vector<struct addrinfo> &infoVec)
+void TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 {
 	for (const auto &info : infoVec) {
 		sockDes = socket(info.ai_family, info.ai_socktype, info.ai_protocol);
@@ -102,8 +101,8 @@ void TCPConn::initConn(vector<struct addrinfo> &infoVec)
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
-	auto infoVec = lookupHost(host, port);
-	initConn(infoVec);
+	vector<struct addrinfo> infoVec = lookupHost(host, port);
+	connectWithFirst(infoVec);
 }
 
 TCPConn::~TCPConn()
@@ -168,12 +167,15 @@ void demo(const string &host, const string &port)
 	cout << string(buf.begin(), buf.begin() + num);
 }
 
-/* Todo: Use a reader/writer interface instead of recv/send, that way buffered
-         	wrappers/scanners can easily be made?
-		 Also add socket options like non-blocking, timeout, etc.
-		 How to select/poll on multiple TCPConns
-		 Add UDPConn
-         Throw exception from within lookupHost and init... */
+/**
+ * Todo:
+ * Use a reader/writer interface instead of recv/send, that way buffered
+ * wrappers/scanners can easily be made?
+ * Also add socket options like non-blocking, timeout, etc.
+ * How to select/poll on multiple TCPConns
+ * Add UDPConn
+ * Throw exception from within lookupHost and init...
+ */
 int main(int argc, char *argv[])
 {
 	if (argc != 3) {
