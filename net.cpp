@@ -244,7 +244,7 @@ void demo(const string &host, const string &port)
 /**
  * Todo:
  * - How to move TCPConn objects without closing fd
- * - Constructor accepting an fd for server accept()
+ * - Constructor accepting an fd + SockAddr for server accept()
  * - Use a reader/writer interface instead of recv/send, that way buffered
  *   wrappers/scanners can easily be made?
  * - Socket options like non-blocking, timeout
