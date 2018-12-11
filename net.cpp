@@ -117,7 +117,7 @@ string SockAddr::getIP()
 	int fam = getFamily();
 	char buf[INET6_ADDRSTRLEN] = {0};
 
-	void *addr;
+	void *addr = nullptr;
 	if (fam == AF_INET)
 		addr = (void *) &((struct sockaddr_in *) &sa)->sin_addr;
 	else if (fam == AF_INET6)
