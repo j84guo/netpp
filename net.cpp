@@ -40,21 +40,22 @@ public:
 		runtime_error(prefix + ": " + strError(err)) { }
 };
 
-struct addrinfo addrInfoHints(int family, int type, int protocol)
+struct addrinfo addrInfoHints(int family, int type, int protocol, int flags)
 {
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = family;
 	hints.ai_socktype = type;
 	hints.ai_protocol = protocol;
+	hints.ai_flags = flags;
 	return hints;
 }
 
 /* returns getaddrinfo error in pair::second on failure */
 pair<vector<struct addrinfo>, int> getAddrInfo(const string &host,
-		const string &port, int family, int type, int protocol)
+		const string &port, int family, int type, int protocol, int flags = 0)
 {
-	struct addrinfo hints = addrInfoHints(family, type, protocol);
+	struct addrinfo hints = addrInfoHints(family, type, protocol, flags);
 	vector<struct addrinfo> infoVec;
 
 	struct addrinfo* info;
