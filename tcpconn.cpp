@@ -18,6 +18,10 @@
 
 using namespace std;
 
+/*
+ * For use by TCPServer::accept(). We still verify that the file descrptor is
+ * valid in order to prevent objects existing in an invalid state.
+ */
 TCPConn::TCPConn(int sockDes, const SockAddr &remote):
 	sockDes(sockDes),
 	remote(remote)
@@ -26,6 +30,9 @@ TCPConn::TCPConn(int sockDes, const SockAddr &remote):
 		throw NetError("TCPConn", errno);
 }
 
+/*
+ * DNS lookup, if necessary, then connect.
+ */
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
@@ -38,6 +45,10 @@ TCPConn::TCPConn(const string &host, const string &port):
 		throw NetError("TcpConn", errno);
 }
 
+/*
+ * By definition "copy" should not involve stealing or sharing file
+ * descriptors. Therefore, we dup() the toCopy object into the new one.
+ */
 TCPConn::TCPConn(const TCPConn &toCopy)
 {
 	sockDes = dup(toCopy.sockDes);
@@ -45,6 +56,10 @@ TCPConn::TCPConn(const TCPConn &toCopy)
 		throw NetError("TCPConn", errno);
 }
 
+/*
+ * Verify that the file descriptor we "steal" from the old object is valid,
+ * throw NetError if not.
+ */
 TCPConn::TCPConn(TCPConn &&toMove):
 	sockDes(toMove.sockDes)
 {
@@ -53,14 +68,15 @@ TCPConn::TCPConn(TCPConn &&toMove):
 	toMove.sockDes = -1;
 }
 
+/*
+ * If sockDes is valid, close it on destruct. Our move constructor sets sockDes
+ * to -1 when it "steals" the file descriptor of an old object, hence the old
+ * object needs to verify that sockDes >= 0 before closing.
+ */
 TCPConn::~TCPConn()
 {
-	if (sockDes >= 0) {
+	if (sockDes >= 0)
 		close(sockDes);
-		cout << "[DESTRUCTOR] closing: " << sockDes << '\n';
-	} else {
-		cout << "[DESTRUCTOR] NOT closing: " << sockDes << '\n';
-	}
 }
 
 SockAddr TCPConn::remoteAddr()
