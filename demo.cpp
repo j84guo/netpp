@@ -14,7 +14,7 @@ void demoClient(const string &host, const string &port)
 	 * close() the TCP connection after sending the response. This makes it
 	 * easy for us to demo this socket library without having to parse the
 	 * HTTP response. We simply read until recv() returns 0.
-	*/ 
+	 */ 
 	TCPConn conn(host, port);
 
 	/*
