@@ -40,21 +40,22 @@ public:
 		runtime_error(prefix + ": " + strError(err)) { }
 };
 
-struct addrinfo addrInfoHints()
+struct addrinfo addrInfoHints(int family, int type, int protocol)
 {
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_protocol = IPPROTO_TCP;
+	hints.ai_family = family;
+	hints.ai_socktype = type;
+	hints.ai_protocol = protocol;
 	return hints;
 }
 
 /* returns getaddrinfo error in pair::second on failure */
 pair<vector<struct addrinfo>, int> getAddrInfo(const string &host,
-		const string &port)
+		const string &port, int family=AF_UNSPEC, int type=SOCK_STREAM,
+		int protocol=IPPROTO_TCP)
 {
-	struct addrinfo hints = addrInfoHints();
+	struct addrinfo hints = addrInfoHints(family, type, protocol);
 	vector<struct addrinfo> infoVec;
 
 	struct addrinfo* info;
@@ -184,7 +185,7 @@ TCPConn::TCPConn(const string &host, const string &port):
 {
 	if (port == "")
 		throw NetError("TcpConn: Bad port");
-	pair<vector<struct addrinfo>, int> res = getAddrInfo(host, port);
+	auto res = getAddrInfo(host, port, AF_UNSPEC, SOCK_STREAM, IPPROTO_TCP);
 	if (res.second)
 		throw NetError(string("TcpConn: ") + gai_strerror(res.second)); 
 	if (!connectWithFirst(res.first))
@@ -258,6 +259,8 @@ void demo(const string &host, const string &port)
 
 /**
  * Todo:
+ * - TCPConn objects should hardcode SOCK_STREAM and IPPROTO_TCP
+ * - getAddrInfo should take hints (family, type, proto...)
  * - How to move TCPConn objects without closing fd
  * - Constructor accepting an fd + SockAddr for server accept()
  * - Use a reader/writer interface instead of recv/send, that way buffered
