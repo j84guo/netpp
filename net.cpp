@@ -130,7 +130,6 @@ string SockAddr::getIP()
 		break;
 	default:
 		return buf;
-		break;
 	}
 
 	inet_ntop(fam, addr, buf, sizeof(buf));
