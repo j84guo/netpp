@@ -5,7 +5,11 @@
 #include <vector>
 #include <iostream>
 
-using namespace std;
+using std::cerr;
+using std::cout;
+using std::string;
+using std::thread;
+using std::vector;
 
 void demoClient(const string &host, const string &port)
 {
