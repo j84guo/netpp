@@ -78,7 +78,8 @@ public:
 	string getIP();
 	int getFamily();
 	int getPort();
-	struct sockaddr *getPtr();
+	struct sockaddr *saPtr();
+	socklen_t *saLenPtr();
 
 private:
 	struct sockaddr_storage sa;
@@ -133,9 +134,14 @@ string SockAddr::getIP()
 	return buf;	
 }
 
-struct sockaddr *SockAddr::getPtr()
+struct sockaddr *SockAddr::saPtr()
 {
 	return (struct sockaddr *) &sa;
+}
+
+socklen_t *SockAddr::saLenPtr()
+{
+	return &saLen;
 }
 
 class TCPConn
