@@ -263,7 +263,7 @@ void demo(const string &host, const string &port)
 	cout << string(buf.begin(), buf.begin() + num);
 
 	SockAddr sa = conn.remoteAddr();
-	cout << sa.getFamily() << ' ' << sa.getPort() << ' ' << sa.getIP();
+	cout << sa.getFamily() << ' ' << sa.getPort() << ' ' << sa.getIP() << '\n';
 }
 
 /**
