@@ -46,7 +46,7 @@ void handleConn(TCPConn conn)
 
 void demoServer()
 {
-	TCPServer server("0.0.0.0", "8000");
+	TCPServer server("127.0.0.1", "8000");
 	cout << "Started server: " << server.localAddr() << '\n';
 
 	while (1) {
