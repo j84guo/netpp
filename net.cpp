@@ -182,11 +182,13 @@ bool TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
+	if (port == "")
+		throw NetError("TcpConn: Bad port");
 	pair<vector<struct addrinfo>, int> res = getAddrInfo(host, port);
 	if (res.second)
-		throw NetError(string("getAddrInfo: ") + gai_strerror(res.second)); 
+		throw NetError(string("TcpConn: ") + gai_strerror(res.second)); 
 	if (!connectWithFirst(res.first))
-		throw NetError("connectWithFirst", errno);
+		throw NetError("TcpConn", errno);
 }
 
 TCPConn::~TCPConn()
