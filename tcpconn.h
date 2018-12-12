@@ -7,13 +7,17 @@
 #include <vector>
 #include <cstddef>
 
-/* Wrapper class for OS sockets */
+/* A TCP connection class wrapping an OS socket. */
 class TCPConn
 {
 public:
-	TCPConn(const std::string &ip, const std::string &port);
-    TCPConn(int sockDes, const SockAddr &remote);
-    ~TCPConn();
+	TCPConn(const std::string &host, const std::string &port);
+	TCPConn(int sockDes, const SockAddr &remote);
+	TCPConn(const TCPConn &toCopy);
+	TCPConn(TCPConn &&toMove);
+	~TCPConn();
+
+	TCPConn &operator=(const TCPConn&) = delete;
 
 	long recv(char *buf, std::size_t num);
 	long send(const char *buf, std::size_t num);

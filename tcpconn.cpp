@@ -1,5 +1,5 @@
-#include "tcpconn.h"
 #include "utils.h"
+#include "tcpconn.h"
 
 #include <string>
 #include <vector>
@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <cstring>
+#include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
 
@@ -20,7 +21,10 @@ using namespace std;
 TCPConn::TCPConn(int sockDes, const SockAddr &remote):
 	sockDes(sockDes),
 	remote(remote)
-{ }
+{
+	if (fcntl(sockDes, F_GETFD) == -1)
+		throw NetError("TCPConn", errno);
+}
 
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
@@ -34,9 +38,29 @@ TCPConn::TCPConn(const string &host, const string &port):
 		throw NetError("TcpConn", errno);
 }
 
+TCPConn::TCPConn(const TCPConn &toCopy)
+{
+	sockDes = dup(toCopy.sockDes);
+	if (sockDes == -1)
+		throw NetError("TCPConn", errno);
+}
+
+TCPConn::TCPConn(TCPConn &&toMove):
+	sockDes(toMove.sockDes)
+{
+	if (fcntl(sockDes, F_GETFD) == -1)
+		throw NetError("TCPConn", errno);
+	toMove.sockDes = -1;
+}
+
 TCPConn::~TCPConn()
 {
-	close(sockDes);
+	if (sockDes >= 0) {
+		close(sockDes);
+		cout << "[DESTRUCTOR] closing: " << sockDes << '\n';
+	} else {
+		cout << "[DESTRUCTOR] NOT closing: " << sockDes << '\n';
+	}
 }
 
 SockAddr TCPConn::remoteAddr()

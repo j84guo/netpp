@@ -1,6 +1,8 @@
 #include "sockaddr.h"
 
+#include <sstream>
 #include <cstring>
+
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
@@ -18,12 +20,12 @@ SockAddr::SockAddr(struct sockaddr_storage &sa, socklen_t saLen):
 	saLen(saLen)
 { }
 
-int SockAddr::getFamily()
+int SockAddr::getFamily() const
 {
 	return sa.ss_family;
 }
 
-int SockAddr::getPort()
+int SockAddr::getPort() const
 {
 	switch (getFamily()) {
 	case AF_INET:
@@ -35,7 +37,7 @@ int SockAddr::getPort()
 	}
 }
 
-string SockAddr::getIP()
+string SockAddr::getIP() const
 {
 	int fam = getFamily();
 	char buf[INET6_ADDRSTRLEN] = {0};
@@ -64,4 +66,18 @@ struct sockaddr *SockAddr::saPtr()
 socklen_t *SockAddr::saLenPtr()
 {
 	return &saLen;
+}
+
+string SockAddr::toString() const
+{
+    stringstream buf;
+    buf << "<SockAddr: family=" << getFamily() << ", IP=" << getIP()
+            << ", port=" << getPort() << ">";
+    return buf.str();
+}
+
+ostream &operator<<(ostream &out, const SockAddr &addr)
+{
+    string s = addr.toString();
+    return out << s;
 }

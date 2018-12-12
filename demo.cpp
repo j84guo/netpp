@@ -1,5 +1,6 @@
 #include "net.h"
 
+#include <thread>
 #include <string>
 #include <vector>
 #include <cstddef>
@@ -7,7 +8,7 @@
 
 using namespace std;
 
-void demo(const string &host, const string &port)
+void demoClient(const string &host, const string &port)
 {
 	TCPConn conn(host, port);
 	string req = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
@@ -16,15 +17,33 @@ void demo(const string &host, const string &port)
 	vector<char> buf;
 	long num = conn.recvAll(buf);
 	cout << string(buf.begin(), buf.begin() + num);
+}
 
-	SockAddr sa = conn.remoteAddr();
-	cout << sa.getFamily() << ' ' << sa.getPort() << ' ' << sa.getIP() << '\n';
+void handleConn(TCPConn conn)
+{
+	cout << "Handling client: " << conn.remoteAddr() << '\n';
+	vector<char> buf;
+	long num = conn.recvAll(buf);
+	cout << string(buf.begin(), buf.begin() + num);
+}
+
+void demoServer()
+{
+	TCPServer server("0.0.0.0", "8000");
+	cout << "Started server: " << server.localAddr() << '\n';
+
+	while (1) {
+		TCPConn conn = server.accept();
+		thread t(handleConn, conn);
+		t.detach();
+	}
 }
 
 /**
  * Todo:
- * - Make SockAddr::saLen accessible for accept()
- * - Constructor accepting an fd + SockAddr for server accept()
+ * - Figure out which objects can/cannot be copied/moved
+ * - Re-think file descriptor verification
+ *
  * - Use a reader/writer interface instead of recv/send, that way buffered
  *   wrappers/scanners can easily be made?
  * - Socket options like non-blocking, timeout
@@ -32,13 +51,11 @@ void demo(const string &host, const string &port)
  */
 int main(int argc, char *argv[])
 {
-	if (argc != 3) {
-		cerr << "Usage: " << argv[0] << " <host> <port>\n";
-		return 1;
-	}
-
 	try {
-		demo(argv[1], argv[2]);
+		if (argc == 3)
+			demoClient(argv[1], argv[2]);
+		else
+			demoServer();
 	} catch (NetError &e) {
 		cerr << e.what() << '\n';
 		return 1;
