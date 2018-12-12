@@ -17,6 +17,28 @@
 
 using namespace std;
 
+TCPConn::TCPConn(int sockDes, const SockAddr &remote):
+	sockDes(sockDes),
+	remote(remote)
+{ }
+
+TCPConn::TCPConn(const string &host, const string &port):
+	sockDes(-1)
+{
+	if (port == "")
+		throw NetError("TcpConn: Bad port");
+	auto res = getAddrInfo(host, port, AF_UNSPEC, SOCK_STREAM, IPPROTO_TCP);
+	if (res.second)
+		throw NetError(string("TcpConn: ") + gaiStrError(res.second));
+	if (!connectWithFirst(res.first))
+		throw NetError("TcpConn", errno);
+}
+
+TCPConn::~TCPConn()
+{
+	close(sockDes);
+}
+
 SockAddr TCPConn::remoteAddr()
 {
 	return remote;
@@ -39,29 +61,11 @@ bool TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 	return false;
 }
 
-TCPConn::TCPConn(const string &host, const string &port):
-	sockDes(-1)
-{
-	if (port == "")
-		throw NetError("TcpConn: Bad port");
-	auto res = getAddrInfo(host, port, AF_UNSPEC, SOCK_STREAM, IPPROTO_TCP);
-	if (res.second)
-		throw NetError(string("TcpConn: ") + gaiStrError(res.second));
-	if (!connectWithFirst(res.first))
-		throw NetError("TcpConn", errno);
-}
-
-TCPConn::~TCPConn()
-{
-	close(sockDes);
-}
-
 long TCPConn::recv(char *buf, size_t num)
 {
 	return ::recv(sockDes, buf, num, 0);
 }
 
-/* recv until connection close */
 long TCPConn::recvAll(vector<char> &buf)
 {
 	size_t num = 0, RECV_SIZE = 4096;

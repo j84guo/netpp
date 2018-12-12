@@ -12,7 +12,8 @@ class TCPConn
 {
 public:
 	TCPConn(const std::string &ip, const std::string &port);
-	~TCPConn();
+    TCPConn(int sockDes, const SockAddr &remote);
+    ~TCPConn();
 
 	long recv(char *buf, std::size_t num);
 	long send(const char *buf, std::size_t num);
