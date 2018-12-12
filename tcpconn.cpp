@@ -57,19 +57,19 @@ TCPConn::~TCPConn()
 	close(sockDes);
 }
 
-ssize_t TCPConn::recv(char *buf, size_t num)
+long TCPConn::recv(char *buf, size_t num)
 {
 	return ::recv(sockDes, buf, num, 0);
 }
 
 /* recv until connection close */
-ssize_t TCPConn::recvAll(vector<char> &buf)
+long TCPConn::recvAll(vector<char> &buf)
 {
 	size_t num = 0, RECV_SIZE = 4096;
 	while (1) {
 		if (num + RECV_SIZE > buf.size())
 			buf.resize(buf.size() + RECV_SIZE);
-		ssize_t ret = ::recv(sockDes, &buf[num], RECV_SIZE, 0);
+		long ret = ::recv(sockDes, &buf[num], RECV_SIZE, 0);
 		if (ret == -1) {
 			if (errno == EINTR)
 				continue;
@@ -82,17 +82,17 @@ ssize_t TCPConn::recvAll(vector<char> &buf)
 	return num;
 }
 
-ssize_t TCPConn::send(const char *buf, size_t num)
+long TCPConn::send(const char *buf, size_t num)
 {
 	return ::send(sockDes, buf, num, 0);
 }
 
 /* send all bytes from buffer */
-ssize_t TCPConn::sendAll(const char *buf, size_t toSend)
+long TCPConn::sendAll(const char *buf, size_t toSend)
 {
 	size_t num = 0;
 	while (num < toSend) {
-		ssize_t ret = ::send(sockDes, buf, toSend - num, 0);
+		long ret = ::send(sockDes, buf, toSend - num, 0);
 		if (ret == -1) {
 			if (errno == EINTR)
 				continue;

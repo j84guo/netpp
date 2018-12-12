@@ -14,7 +14,7 @@ void demo(const string &host, const string &port)
 	conn.sendAll(req.c_str(), req.size());
 
 	vector<char> buf;
-	ssize_t num = conn.recvAll(buf);
+	long num = conn.recvAll(buf);
 	cout << string(buf.begin(), buf.begin() + num);
 
 	SockAddr sa = conn.remoteAddr();

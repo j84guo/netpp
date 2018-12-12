@@ -14,10 +14,10 @@ public:
 	TCPConn(const std::string &ip, const std::string &port);
 	~TCPConn();
 
-	ssize_t recv(char *buf, std::size_t num);
-	ssize_t send(const char *buf, std::size_t num);
-	ssize_t recvAll(std::vector<char> &buf);
-	ssize_t sendAll(const char *buf, std::size_t num);
+	long recv(char *buf, std::size_t num);
+	long send(const char *buf, std::size_t num);
+	long recvAll(std::vector<char> &buf);
+	long sendAll(const char *buf, std::size_t num);
 
 	SockAddr remoteAddr();
 
