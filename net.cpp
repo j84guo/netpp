@@ -58,9 +58,9 @@ pair<vector<struct addrinfo>, int> getAddrInfo(const string &host,
 	vector<struct addrinfo> infoVec;
 
 	struct addrinfo* info;
-	int ret = getaddrinfo(host.c_str(), port.c_str(), &hints, &info);
-	if (ret)
-		return make_pair(infoVec, ret);
+	int err = getaddrinfo(host.c_str(), port.c_str(), &hints, &info);
+	if (err)
+		return make_pair(infoVec, err);
 	for (struct addrinfo *ptr = info; ptr; ptr = ptr->ai_next)
 		infoVec.push_back(*ptr);
 
