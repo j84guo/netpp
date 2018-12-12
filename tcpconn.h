@@ -1,3 +1,6 @@
+#ifndef TCPCONN_H
+#define TCPCONN_H
+
 #include "sockaddr.h"
 
 #include <string>
@@ -23,3 +26,5 @@ private:
 	int sockDes;
 	SockAddr remote;
 };
+
+#endif
