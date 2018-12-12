@@ -182,7 +182,7 @@ bool TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
-	auto res = getAddrInfo(host, port);
+	pair<vector<struct addrinfo>, int> res = getAddrInfo(host, port);
 	if (res.second)
 		throw NetError(string("getAddrInfo: ") + gai_strerror(res.second)); 
 	if (!connectWithFirst(res.first))
