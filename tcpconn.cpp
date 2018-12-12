@@ -22,7 +22,6 @@ SockAddr TCPConn::remoteAddr()
 	return remote;
 }
 
-/* sets errno and returns false if all connection attempts fail */
 bool TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 {
 	for (const auto &info : infoVec) {
@@ -87,7 +86,6 @@ long TCPConn::send(const char *buf, size_t num)
 	return ::send(sockDes, buf, num, 0);
 }
 
-/* send all bytes from buffer */
 long TCPConn::sendAll(const char *buf, size_t toSend)
 {
 	size_t num = 0;
