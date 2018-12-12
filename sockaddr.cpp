@@ -6,7 +6,9 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-using namespace std;
+using std::string;
+using std::ostream;
+using std::stringstream;
 
 SockAddr::SockAddr()
 {

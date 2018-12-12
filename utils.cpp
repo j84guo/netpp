@@ -3,7 +3,11 @@
 #include <cstdio>
 #include <cstring>
 
-using namespace std;
+using std::pair;
+using std::string;
+using std::vector;
+using std::make_pair;
+using std::runtime_error;
 
 NetError::NetError(const string &msg):
 	runtime_error(msg)

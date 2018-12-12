@@ -16,7 +16,10 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-using namespace std;
+using std::pair;
+using std::size_t;
+using std::string;
+using std::vector;
 
 /*
  * For use by TCPServer::accept(). We still verify that the file descrptor is
