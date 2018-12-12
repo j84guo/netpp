@@ -124,10 +124,13 @@ string SockAddr::getIP()
 	switch (fam) {
 	case AF_INET:
 		addr = (void *) &((struct sockaddr_in *) &sa)->sin_addr;
+		break;
 	case AF_INET6:
 		addr = (void *) &((struct sockaddr_in6 *) &sa)->sin6_addr;
+		break;
 	default:
 		return buf;
+		break;
 	}
 
 	inet_ntop(fam, addr, buf, sizeof(buf));
