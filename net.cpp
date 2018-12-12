@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <utility>
 #include <iostream>
 #include <stdexcept>
 
@@ -49,8 +50,9 @@ struct addrinfo addrInfoHints()
 	return hints;
 }
 
-/* throws NetError on getaddrinfo failure */
-vector<struct addrinfo> getAddrInfo(const string &host, const string &port)
+/* returns getaddrinfo error in pair::second on failure */
+pair<vector<struct addrinfo>, int> getAddrInfo(const string &host,
+		const string &port)
 {
 	struct addrinfo hints = addrInfoHints();
 	vector<struct addrinfo> infoVec;
@@ -58,12 +60,12 @@ vector<struct addrinfo> getAddrInfo(const string &host, const string &port)
 	struct addrinfo* info;
 	int ret = getaddrinfo(host.c_str(), port.c_str(), &hints, &info);
 	if (ret)
-		throw NetError(string("lookupHost: ") + gai_strerror(ret));
+		return make_pair(infoVec, ret);
 	for (struct addrinfo *ptr = info; ptr; ptr = ptr->ai_next)
 		infoVec.push_back(*ptr);
 
 	freeaddrinfo(info);
-	return infoVec;
+	return make_pair(infoVec, 0);
 }
 
 class SockAddr
@@ -78,7 +80,6 @@ public:
 	struct sockaddr *getPtr();
 
 private:
-	string ip;
 	struct sockaddr_storage sa;
 	socklen_t saLen;
 };
@@ -103,12 +104,12 @@ int SockAddr::getFamily()
 int SockAddr::getPort()
 {
 	switch (getFamily()) {
-		case AF_INET:
-			return ntohs(((struct sockaddr_in *) &sa)->sin_port);
-		case AF_INET6:
-			return ntohs(((struct sockaddr_in6 *) &sa)->sin6_port);
-		default:
-			return -1;
+	case AF_INET:
+		return ntohs(((struct sockaddr_in *) &sa)->sin_port);
+	case AF_INET6:
+		return ntohs(((struct sockaddr_in6 *) &sa)->sin6_port);
+	default:
+		return -1;
 	}
 }
 
@@ -118,12 +119,14 @@ string SockAddr::getIP()
 	char buf[INET6_ADDRSTRLEN] = {0};
 
 	void *addr;
-	if (fam == AF_INET)
+	switch (fam) {
+	case AF_INET:
 		addr = (void *) &((struct sockaddr_in *) &sa)->sin_addr;
-	else if (fam == AF_INET6)
+	case AF_INET6:
 		addr = (void *) &((struct sockaddr_in6 *) &sa)->sin6_addr;
-	else
+	default:
 		return buf;
+	}
 
 	inet_ntop(fam, addr, buf, sizeof(buf));
 	return buf;	
@@ -148,7 +151,7 @@ public:
 	SockAddr remoteAddr();
 
 private:
-	void connectWithFirst(vector<struct addrinfo> &infoVec);
+	bool connectWithFirst(vector<struct addrinfo> &infoVec);
 	int sockDes;
 	SockAddr remote;
 };
@@ -158,8 +161,8 @@ SockAddr TCPConn::remoteAddr()
 	return remote;
 }
 
-/* throws NetError if all connection attempts fail */
-void TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
+/* sets errno and returns false if all connection attempts fail */
+bool TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 {
 	for (const auto &info : infoVec) {
 		sockDes = socket(info.ai_family, info.ai_socktype, info.ai_protocol);
@@ -171,16 +174,19 @@ void TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 		}
 		remote = SockAddr(*((struct sockaddr_storage *) info.ai_addr),
 				info.ai_addrlen);
-		return;
+		return true;
 	}
-	throw NetError("initConn", errno);
+	return false;
 }
 
 TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
-	vector<struct addrinfo> infoVec = getAddrInfo(host, port);
-	connectWithFirst(infoVec);
+	auto res = getAddrInfo(host, port);
+	if (res.second)
+		throw NetError(string("getAddrInfo: ") + gai_strerror(res.second)); 
+	if (!connectWithFirst(res.first))
+		throw NetError("connectWithFirst", errno);
 }
 
 TCPConn::~TCPConn()
