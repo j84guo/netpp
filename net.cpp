@@ -52,8 +52,7 @@ struct addrinfo addrInfoHints(int family, int type, int protocol)
 
 /* returns getaddrinfo error in pair::second on failure */
 pair<vector<struct addrinfo>, int> getAddrInfo(const string &host,
-		const string &port, int family=AF_UNSPEC, int type=SOCK_STREAM,
-		int protocol=IPPROTO_TCP)
+		const string &port, int family, int type, int protocol)
 {
 	struct addrinfo hints = addrInfoHints(family, type, protocol);
 	vector<struct addrinfo> infoVec;
