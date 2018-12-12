@@ -77,12 +77,11 @@ bool TCPServer::listen()
 
 TCPConn TCPServer::accept()
 {
-	struct sockaddr_storage sa;
-	socklen_t saLen = sizeof(sa);
+	SockAddr remote;
 
-	int connDes = ::accept(sockDes, (struct sockaddr *) &sa, &saLen);
+	int connDes = ::accept(sockDes, remote.saPtr(), remote.saLenPtr());
 	if (connDes == -1)
 		throw NetError("accept", errno);
 
-	return TCPConn(connDes, SockAddr(sa, saLen));
+	return TCPConn(connDes, remote);
 }

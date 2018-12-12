@@ -49,7 +49,8 @@ TCPConn::TCPConn(const string &host, const string &port):
  * By definition "copy" should not involve stealing or sharing file
  * descriptors. Therefore, we dup() the toCopy object into the new one.
  */
-TCPConn::TCPConn(const TCPConn &toCopy)
+TCPConn::TCPConn(const TCPConn &toCopy):
+	remote(toCopy.remote)
 {
 	sockDes = dup(toCopy.sockDes);
 	if (sockDes == -1)
@@ -61,7 +62,8 @@ TCPConn::TCPConn(const TCPConn &toCopy)
  * throw NetError if not.
  */
 TCPConn::TCPConn(TCPConn &&toMove):
-	sockDes(toMove.sockDes)
+	sockDes(toMove.sockDes),
+	remote(toMove.remote)
 {
 	if (fcntl(sockDes, F_GETFD) == -1)
 		throw NetError("TCPConn", errno);
