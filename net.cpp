@@ -259,16 +259,12 @@ void demo(const string &host, const string &port)
 
 /**
  * Todo:
- * - TCPConn objects should hardcode SOCK_STREAM and IPPROTO_TCP
- * - getAddrInfo should take hints (family, type, proto...)
- * - How to move TCPConn objects without closing fd
+ * - Make SockAddr::saLen accessible for accept()
  * - Constructor accepting an fd + SockAddr for server accept()
  * - Use a reader/writer interface instead of recv/send, that way buffered
  *   wrappers/scanners can easily be made?
  * - Socket options like non-blocking, timeout
  * - How to select/poll on multiple TCPConns
- * - Return std::pair instead of throwing
- * - Improve SockAddr
  */
 int main(int argc, char *argv[])
 {
