@@ -17,13 +17,13 @@ public:
 
 	struct sockaddr *saPtr();
 	socklen_t *saLenPtr();
-    std::string toString() const;
+	std::string toString() const;
 
 private:
 	struct sockaddr_storage sa;
 	socklen_t saLen;
 
-    friend std::ostream &operator<<(std::ostream &out, const SockAddr &addr);
+	friend std::ostream &operator<<(std::ostream &out, const SockAddr &addr);
 };
 
 #endif

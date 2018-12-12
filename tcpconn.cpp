@@ -71,7 +71,9 @@ TCPConn::TCPConn(TCPConn &&toMove):
 /*
  * If sockDes is valid, close it on destruct. Our move constructor sets sockDes
  * to -1 when it "steals" the file descriptor of an old object, hence the old
- * object needs to verify that sockDes >= 0 before closing.
+ * object needs to verify that sockDes >= 0 before closing. If we didn't do
+ * this check, we would close a file descriptor that's still in use by a
+ * moved object! Sad.
  */
 TCPConn::~TCPConn()
 {
