@@ -11,7 +11,7 @@ package.
 ### Usage
 Netpp is distributed as a shared library with headers, so you'll have to run
 the ```make install``` target (above) in order to compile code using this
-libary.
+library.
 
 Usage in your code is extremely simple. You can access the whole lirbary by
 including ```netpp/net.h```. All functions/types exist withint the ```net```
@@ -19,7 +19,6 @@ namespace. The snippet bellow shows usage of ```class TCPConn```.
 
 ```cpp
 #include <netpp/net.h>
-
 #include <iostream>
 #include <vector>
 
