@@ -65,7 +65,8 @@ bool net::TCPServer::socket(int family, int type, int protocol)
 		return false;
 
 	int val = 1;
-	if(setsockopt(sockDes, SOL_SOCKET, SO_REUSEADDR, &val, sizeof val) == -1)
+	if(reBind && setsockopt(sockDes, SOL_SOCKET, SO_REUSEADDR, &val,
+			sizeof val) == -1)
 		return false;
 
 	return true;

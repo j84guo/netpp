@@ -33,9 +33,7 @@ net::TCPConn::TCPConn(int sockDes, const SockAddr &remote):
 		throw NetError("TCPConn", errno);
 }
 
-/*
- * DNS lookup, if necessary, then connect.
- */
+/* DNS lookup, if necessary, then connect. */
 net::TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
@@ -63,6 +61,10 @@ net::TCPConn::TCPConn(const TCPConn &toCopy):
 /*
  * Verify that the file descriptor we "steal" from the old object is valid,
  * throw NetError if not.
+ *
+ * Move construction is helpful because TCPServer::accept can now return a
+ * TCPConn object (which is semantically clear and convenient) without having
+ * to duplicate the file descriptor.
  */
 net::TCPConn::TCPConn(TCPConn &&toMove):
 	sockDes(toMove.sockDes),
