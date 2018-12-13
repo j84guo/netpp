@@ -33,7 +33,6 @@ void echoServer()
 {
 	TCPServer server("127.0.0.1", "8000");
 	cout << "Started server: " << server.localAddr() << '\n';
-
 	while (1) {
 		TCPConn conn = server.accept();
 		thread t(handleConn, move(conn));
@@ -49,6 +48,5 @@ int main(int argc, char *argv[])
 		cerr << e.what() << '\n';
 		return 1;
 	}
-
 	return 0;
 }
