@@ -15,9 +15,9 @@ libary.
 
 Usage in your code is extremely simple. You can access the whole lirbary by
 including ```netpp/net.h```. All functions/types exist withint the ```net```
-namespace. The snippet bellow shows usage of ```class TCPConn```.
+namespace. The snippet bellow shows usage of ```cppclass TCPConn```.
 
-```js
+```cpp
 #include <netpp/net.h>
 
 #include <iostream>
