@@ -38,6 +38,17 @@ string net::gaiStrError(int err)
     return gai_strerror(err);
 }
 
+string net::addrFamilyString(int fam)
+{
+	switch (fam) {
+	case AF_INET:
+		return "IPv4";
+	case AF_INET6:
+		return "IPv6";
+	default:
+		return "Unknown Family";
+	}
+}
 
 struct addrinfo net::addrInfoHints(int family, int type, int protocol, int flags)
 {

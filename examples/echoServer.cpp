@@ -26,7 +26,7 @@ void handleConn(TCPConn conn)
 			break;
 		conn.sendAll(&buf[0], num);
 	}
-	cout << "Client " << conn.remoteAddr() << " disconnected\n"; 
+	cout << "Client disconnected: " << conn.remoteAddr() << '\n'; 
 }
 
 void echoServer()

@@ -1,3 +1,4 @@
+#include "utils.h"
 #include "sockaddr.h"
 
 #include <sstream>
@@ -73,8 +74,8 @@ socklen_t *net::SockAddr::saLenPtr()
 string net::SockAddr::toString() const
 {
     stringstream buf;
-    buf << "<SockAddr: family=" << getFamily() << ", IP=" << getIP()
-            << ", port=" << getPort() << ">";
+    buf << "<SockAddr: family=" << addrFamilyString(getFamily()) << ", IP="
+			<< getIP() << ", port=" << getPort() << ">";
     return buf.str();
 }
 
