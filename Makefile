@@ -7,10 +7,10 @@ uninstall:
 	./scripts/uninstall_lib.sh	
 
 # Also kind of sketchy
-demo:
+demo.out:
 	g++ -o $@ -Wall -std=c++17 -I src/ examples/demo.cpp src/*.cpp -lpthread
 
 clean:
 	rm -rf *.o *.out
 
-.PHONY: clean install demo
+.PHONY: clean install demo.out
