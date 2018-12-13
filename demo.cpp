@@ -5,7 +5,9 @@
 #include <vector>
 #include <iostream>
 
-using namespace net;
+using net::TCPConn;
+using net::TCPServer;
+using net::NetError;
 
 using std::cerr;
 using std::cout;
