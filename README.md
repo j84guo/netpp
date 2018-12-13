@@ -40,17 +40,16 @@ int main()
 }
 ```
 
-### Demo (see examples/demo.cpp)
+### Demo (see examples/ directory)
 ```sh
 # Build demo
-make demo.out
+make demo
 
-# Mode 1: HTTP GET request
-./demo.out google.ca 80
-./demo.out <domainName> <portNumber>
+# Demo 1: HTTP GET request
+./demoClient.out google.ca 80
 
-# Mode 2: Simple Multi-threaded TCP Server
-./demo.out
+# Demo 2: Simple Multi-threaded TCP Server
+./demoServer.out
 
 # (From a seperate shell tab)
 nc localhost 8000
