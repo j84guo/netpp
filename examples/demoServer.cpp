@@ -49,6 +49,16 @@ void demoServer()
 		/*
 		 * We use a simple concurreny model: each connection gets handled by
 		 * a new thread.
+		 *
+		 * The std::thread constructor accepts a function pointer (handleConn)
+		 * and a variable list of arguments to call the function pointer with.
+		 * It then asks the OS to create a separate execution context (a thread
+		 * of execution) in which the function pointer is called.
+		 *
+		 * Detaching a thread is a common concept across languages. It allows
+		 * the newly created thread to run independently of the main thread.
+		 * The implications of detaching a thread vs its analogue, joining, are
+		 * described in: man pthread_detach.
 		 */
 		thread t(handleConn, conn);
 		t.detach();
