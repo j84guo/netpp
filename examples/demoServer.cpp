@@ -33,7 +33,7 @@ void handleConn(TCPConn conn)
 void demoServer()
 {
 	/*
- 	 * The TCPServer object acquires a socket descrptor, binds to a local IP
+ 	 * The TCPServer object acquires a socket descriptor, binds to a local IP
  	 * address and port (passed to it in the constructor) and listens for
  	 * connection requests.
  	 */ 
@@ -49,7 +49,7 @@ void demoServer()
 		TCPConn conn = server.accept();
 
 		/*
-		 * We use a simple concurreny model: each connection gets handled by
+		 * We use a simple concurrency model: each connection gets handled by
 		 * a new thread.
 		 *
 		 * The std::thread constructor accepts a function pointer (handleConn)
