@@ -7,7 +7,6 @@
 #include <vector>
 #include <cstddef>
 
-/* [NAMESPACE START] net */
 namespace net
 {
 
@@ -36,6 +35,6 @@ private:
 	SockAddr remote;
 };
 
-} /* [NAMESPACE END] net */
+}
 
 #endif

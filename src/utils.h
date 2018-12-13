@@ -7,7 +7,6 @@
 
 #include <netdb.h>
 
-/* [NAMESPACE START] net */
 namespace net
 {
 
@@ -43,7 +42,7 @@ std::pair<std::vector<struct addrinfo>, int> getAddrInfo(
         int protocol, int flags = 0);
 
 
-} /* [NAMESPACE END] net */
+}
 
 
 #endif

@@ -5,7 +5,6 @@
 #include <iostream>
 #include <sys/socket.h>
 
-/* [NAMESPACE START] net */
 namespace net
 {
 
