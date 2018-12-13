@@ -22,7 +22,7 @@ using std::string;
 using std::vector;
 
 /*
- * For use by TCPServer::accept(). We still verify that the file descrptor is
+ * For use by TCPServer::accept(). We still verify that the file descriptor is
  * valid in order to prevent objects existing in an invalid state.
  */
 net::TCPConn::TCPConn(int sockDes, const SockAddr &remote):
@@ -49,29 +49,26 @@ net::TCPConn::TCPConn(const string &host, const string &port):
 /*
  * By definition "copy" should not involve stealing or sharing file
  * descriptors. Therefore, we dup() the toCopy object into the new one.
+ *
+ * Note that our class invariant is that objects must have a valid file
+ * descriptor, hence copy and move constructors don't need to check.
  */
 net::TCPConn::TCPConn(const TCPConn &toCopy):
 	remote(toCopy.remote)
 {
 	sockDes = dup(toCopy.sockDes);
-	if (sockDes == -1)
-		throw NetError("TCPConn", errno);
 }
 
 /*
- * Verify that the file descriptor we "steal" from the old object is valid,
- * throw NetError if not.
- *
  * Move construction is helpful because TCPServer::accept can now return a
  * TCPConn object (which is semantically clear and convenient) without having
- * to duplicate the file descriptor.
+ * to duplicate the file descriptor in the copy constructor. Instead, we
+ * "steal" it.
  */
 net::TCPConn::TCPConn(TCPConn &&toMove):
 	sockDes(toMove.sockDes),
 	remote(toMove.remote)
 {
-	if (fcntl(sockDes, F_GETFD) == -1)
-		throw NetError("TCPConn", errno);
 	toMove.sockDes = -1;
 }
 
