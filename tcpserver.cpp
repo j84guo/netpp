@@ -66,7 +66,7 @@ bool TCPServer::socket(int family, int type, int protocol)
 
 	int val = 1;
 	if(setsockopt(sockDes, SOL_SOCKET, SO_REUSEADDR, &val, sizeof val) == -1)
-    	return false;
+		return false;
 
 	return true;
 }
