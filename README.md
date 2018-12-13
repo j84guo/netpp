@@ -3,6 +3,8 @@ We're well into the 21st century, stop fiddling with `struct sockaddr_storage`
 and `getaddrinfo`! This a simple socket library inspired by Golang's `net`
 package.
 
+![Alt text](img/furries.jpg?raw=true "Lol")
+
 ### Installation
 ```make install```
 
@@ -12,7 +14,7 @@ the ```make install``` target (above) in order to compile code using this
 libary.
 
 Usage in your code is extremely simple. You can access the whole lirbary by
-including ```net.h```. All functions/types exist withint the ```net```
+including ```netpp/net.h```. All functions/types exist withint the ```net```
 namespace. The snippet bellow shows usage of ```class TCPConn```.
 
 ```
