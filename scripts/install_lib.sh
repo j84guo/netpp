@@ -13,7 +13,7 @@ sudo chmod 0755 /usr/local/lib/libnetpp.so
 
 # Refresh ldconfig cache
 sudo ldconfig
-ldconfig -p | grep netpp
+ldconfig -p | grep netpp # sudo update_dyld_shared_cache (Mac OSX)
 
 # Put headers in system location
 sudo mkdir -p /usr/local/include/netpp
