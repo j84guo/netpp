@@ -5,6 +5,8 @@
 #include <vector>
 #include <iostream>
 
+using namespace net;
+
 using std::cerr;
 using std::cout;
 using std::string;

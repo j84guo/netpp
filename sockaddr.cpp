@@ -10,24 +10,24 @@ using std::string;
 using std::ostream;
 using std::stringstream;
 
-SockAddr::SockAddr()
+net::SockAddr::SockAddr()
 {
 	saLen = sizeof(struct sockaddr_storage);
 	memset(&sa, 0, saLen);
 	sa.ss_family = AF_UNSPEC;
 }
 
-SockAddr::SockAddr(struct sockaddr_storage &sa, socklen_t saLen):
+net::SockAddr::SockAddr(struct sockaddr_storage &sa, socklen_t saLen):
 	sa(sa),
 	saLen(saLen)
 { }
 
-int SockAddr::getFamily() const
+int net::SockAddr::getFamily() const
 {
 	return sa.ss_family;
 }
 
-int SockAddr::getPort() const
+int net::SockAddr::getPort() const
 {
 	switch (getFamily()) {
 	case AF_INET:
@@ -39,7 +39,7 @@ int SockAddr::getPort() const
 	}
 }
 
-string SockAddr::getIP() const
+string net::SockAddr::getIP() const
 {
 	int fam = getFamily();
 	char buf[INET6_ADDRSTRLEN] = {0};
@@ -60,17 +60,17 @@ string SockAddr::getIP() const
 	return buf;
 }
 
-struct sockaddr *SockAddr::saPtr()
+struct sockaddr *net::SockAddr::saPtr()
 {
 	return (struct sockaddr *) &sa;
 }
 
-socklen_t *SockAddr::saLenPtr()
+socklen_t *net::SockAddr::saLenPtr()
 {
 	return &saLen;
 }
 
-string SockAddr::toString() const
+string net::SockAddr::toString() const
 {
     stringstream buf;
     buf << "<SockAddr: family=" << getFamily() << ", IP=" << getIP()
@@ -78,7 +78,7 @@ string SockAddr::toString() const
     return buf.str();
 }
 
-ostream &operator<<(ostream &out, const SockAddr &addr)
+ostream& net::operator<<(ostream &out, const SockAddr &addr)
 {
     string s = addr.toString();
     return out << s;

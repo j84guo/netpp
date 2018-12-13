@@ -7,6 +7,10 @@
 #include <vector>
 #include <cstddef>
 
+/* [NAMESPACE START] net */
+namespace net
+{
+
 /* A TCP connection class wrapping an OS socket. */
 class TCPConn
 {
@@ -31,5 +35,7 @@ private:
 	int sockDes;
 	SockAddr remote;
 };
+
+} /* [NAMESPACE END] net */
 
 #endif

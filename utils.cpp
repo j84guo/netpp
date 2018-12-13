@@ -9,19 +9,19 @@ using std::vector;
 using std::make_pair;
 using std::runtime_error;
 
-NetError::NetError(const string &msg):
+net::NetError::NetError(const string &msg):
 	runtime_error(msg)
 { }
 
-NetError::NetError(int err):
+net::NetError::NetError(int err):
 	runtime_error(strError(err))
 { }
 
-NetError::NetError(const string &prefix, int err):
+net::NetError::NetError(const string &prefix, int err):
 	runtime_error(prefix + ": " + strError(err))
 { }
 
-string strError(int err)
+string net::strError(int err)
 {
 	char buf[128] = {0}, *ptr = nullptr;
 #if defined(__GLIBC__) && defined(_GNU_SOURCE)
@@ -33,13 +33,13 @@ string strError(int err)
 	return ptr;
 }
 
-string gaiStrError(int err)
+string net::gaiStrError(int err)
 {
     return gai_strerror(err);
 }
 
 
-struct addrinfo addrInfoHints(int family, int type, int protocol, int flags)
+struct addrinfo net::addrInfoHints(int family, int type, int protocol, int flags)
 {
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -50,7 +50,7 @@ struct addrinfo addrInfoHints(int family, int type, int protocol, int flags)
 	return hints;
 }
 
-pair<vector<struct addrinfo>, int> getAddrInfo(const string &host,
+pair<vector<struct addrinfo>, int> net::getAddrInfo(const string &host,
 		const string &port, int family, int type, int protocol, int flags)
 {
 	struct addrinfo hints = addrInfoHints(family, type, protocol, flags);

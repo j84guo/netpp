@@ -6,6 +6,10 @@
 #include <string>
 #include <vector>
 
+/* [NAMESPACE START] net */
+namespace net 
+{
+
 class TCPServer
 {
  public:
@@ -25,5 +29,7 @@ class TCPServer
 	int sockDes;
 	SockAddr local;
 };
+
+} /* [NAMESPACE END] net */
 
 #endif

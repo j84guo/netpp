@@ -7,6 +7,10 @@
 
 #include <netdb.h>
 
+/* [NAMESPACE START] net */
+namespace net
+{
+
 /* A runtime_error which can search for a message given an OS error code. Thrown
    by network operations, e.g. TcpConn's constructor. */
 class NetError : public std::runtime_error
@@ -37,5 +41,9 @@ struct addrinfo addrInfoHints(int family, int type, int protocol, int flags);
 std::pair<std::vector<struct addrinfo>, int> getAddrInfo(
         const std::string &host, const std::string &port, int family, int type,
         int protocol, int flags = 0);
+
+
+} /* [NAMESPACE END] net */
+
 
 #endif

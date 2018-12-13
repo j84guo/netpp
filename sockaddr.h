@@ -5,6 +5,10 @@
 #include <iostream>
 #include <sys/socket.h>
 
+/* [NAMESPACE START] net */
+namespace net
+{
+
 class SockAddr
 {
 public:
@@ -23,7 +27,11 @@ private:
 	struct sockaddr_storage sa;
 	socklen_t saLen;
 
-	friend std::ostream &operator<<(std::ostream &out, const SockAddr &addr);
+	friend std::ostream& operator<<(std::ostream &out, const SockAddr &addr);
 };
+
+std::ostream& operator<<(std::ostream &out, const SockAddr &addr);
+
+}
 
 #endif

@@ -25,7 +25,7 @@ using std::vector;
  * For use by TCPServer::accept(). We still verify that the file descrptor is
  * valid in order to prevent objects existing in an invalid state.
  */
-TCPConn::TCPConn(int sockDes, const SockAddr &remote):
+net::TCPConn::TCPConn(int sockDes, const SockAddr &remote):
 	sockDes(sockDes),
 	remote(remote)
 {
@@ -36,7 +36,7 @@ TCPConn::TCPConn(int sockDes, const SockAddr &remote):
 /*
  * DNS lookup, if necessary, then connect.
  */
-TCPConn::TCPConn(const string &host, const string &port):
+net::TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
 	if (port == "")
@@ -52,7 +52,7 @@ TCPConn::TCPConn(const string &host, const string &port):
  * By definition "copy" should not involve stealing or sharing file
  * descriptors. Therefore, we dup() the toCopy object into the new one.
  */
-TCPConn::TCPConn(const TCPConn &toCopy):
+net::TCPConn::TCPConn(const TCPConn &toCopy):
 	remote(toCopy.remote)
 {
 	sockDes = dup(toCopy.sockDes);
@@ -64,7 +64,7 @@ TCPConn::TCPConn(const TCPConn &toCopy):
  * Verify that the file descriptor we "steal" from the old object is valid,
  * throw NetError if not.
  */
-TCPConn::TCPConn(TCPConn &&toMove):
+net::TCPConn::TCPConn(TCPConn &&toMove):
 	sockDes(toMove.sockDes),
 	remote(toMove.remote)
 {
@@ -80,18 +80,18 @@ TCPConn::TCPConn(TCPConn &&toMove):
  * this check, we would close a file descriptor that's still in use by a
  * moved object! Sad.
  */
-TCPConn::~TCPConn()
+net::TCPConn::~TCPConn()
 {
 	if (sockDes >= 0)
 		close(sockDes);
 }
 
-SockAddr TCPConn::remoteAddr()
+net::SockAddr net::TCPConn::remoteAddr()
 {
 	return remote;
 }
 
-bool TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
+bool net::TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 {
 	for (const auto &info : infoVec) {
 		sockDes = socket(info.ai_family, info.ai_socktype, info.ai_protocol);
@@ -108,12 +108,12 @@ bool TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 	return false;
 }
 
-long TCPConn::recv(char *buf, size_t num)
+long net::TCPConn::recv(char *buf, size_t num)
 {
 	return ::recv(sockDes, buf, num, 0);
 }
 
-long TCPConn::recvAll(vector<char> &buf)
+long net::TCPConn::recvAll(vector<char> &buf)
 {
 	size_t num = 0, RECV_SIZE = 4096;
 	while (1) {
@@ -132,12 +132,12 @@ long TCPConn::recvAll(vector<char> &buf)
 	return num;
 }
 
-long TCPConn::send(const char *buf, size_t num)
+long net::TCPConn::send(const char *buf, size_t num)
 {
 	return ::send(sockDes, buf, num, 0);
 }
 
-long TCPConn::sendAll(const char *buf, size_t toSend)
+long net::TCPConn::sendAll(const char *buf, size_t toSend)
 {
 	size_t num = 0;
 	while (num < toSend) {

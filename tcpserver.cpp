@@ -17,7 +17,7 @@
 using std::string;
 using std::vector;
 
-TCPServer::TCPServer(const string & host, const string & port, bool reBind):
+net::TCPServer::TCPServer(const string & host, const string & port, bool reBind):
 	reBind(reBind)
 {
 	if (port == "")
@@ -32,17 +32,17 @@ TCPServer::TCPServer(const string & host, const string & port, bool reBind):
 		throw NetError("TCPServer", errno);
 }
 
-TCPServer::~TCPServer()
+net::TCPServer::~TCPServer()
 {
 	close(sockDes);
 }
 
-SockAddr TCPServer::localAddr()
+net::SockAddr net::TCPServer::localAddr()
 {
 	return local;
 }
 
-bool TCPServer::bindWithFirst(vector <struct addrinfo> &infoVec)
+bool net::TCPServer::bindWithFirst(vector <struct addrinfo> &infoVec)
 {
 	for (const auto & info:infoVec) {
 		if (!socket(info.ai_family, info.ai_socktype, info.ai_protocol))
@@ -58,7 +58,7 @@ bool TCPServer::bindWithFirst(vector <struct addrinfo> &infoVec)
 	return false;
 }
 
-bool TCPServer::socket(int family, int type, int protocol)
+bool net::TCPServer::socket(int family, int type, int protocol)
 {
 	sockDes = ::socket(family, type, protocol);
 	if (sockDes == -1)
@@ -71,12 +71,12 @@ bool TCPServer::socket(int family, int type, int protocol)
 	return true;
 }
 
-bool TCPServer::listen()
+bool net::TCPServer::listen()
 {
 	return ::listen(sockDes, 32) != -1;
 }
 
-TCPConn TCPServer::accept()
+net::TCPConn net::TCPServer::accept()
 {
 	SockAddr remote;
 
