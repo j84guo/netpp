@@ -34,9 +34,8 @@ int main()
 	TCPConn conn("google.ca", "80");
 	conn.sendAll(req.c_str(), req.size());
 
-	vector<char> buf;
-	long num = conn.recvAll(buf);
-	cout << string(buf.begin(), buf.begin() + num) << '\n';
+	vector<char> buf = conn.recvAll(buf);
+	cout << string(buf.begin(), buf.end()) << '\n';
 }
 ```
 
