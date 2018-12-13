@@ -25,8 +25,6 @@ public:
 private:
 	struct sockaddr_storage sa;
 	socklen_t saLen;
-
-	friend std::ostream& operator<<(std::ostream &out, const SockAddr &addr);
 };
 
 std::ostream& operator<<(std::ostream &out, const SockAddr &addr);
