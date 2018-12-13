@@ -3,6 +3,7 @@
 #include <thread>
 #include <string>
 #include <vector>
+#include <utility>
 #include <iostream>
 
 using net::TCPConn;
@@ -11,6 +12,7 @@ using net::NetError;
 
 using std::cerr;
 using std::cout;
+using std::move;
 using std::string;
 using std::thread;
 using std::vector;
@@ -59,8 +61,11 @@ void demoServer()
 		 * the newly created thread to run independently of the main thread.
 		 * The implications of detaching a thread vs its analogue, joining, are
 		 * described in: man pthread_detach.
+		 *
+		 * Note the usage of std::move is a little bit advanced, simply passing
+		 * conn (resulting in a cheap copy constructor call) is also ok.
 		 */
-		thread t(handleConn, conn);
+		thread t(handleConn, move(conn));
 		t.detach();
 	}
 }
