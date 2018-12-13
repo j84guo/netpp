@@ -10,6 +10,7 @@ uninstall:
 demo:
 	g++ -o demoClient.out -Wall -std=c++17 -I src/ examples/demoClient.cpp src/*.cpp -lpthread
 	g++ -o demoServer.out -Wall -std=c++17 -I src/ examples/demoServer.cpp src/*.cpp -lpthread
+	g++ -o echoServer.out -Wall -std=c++17 -I src/ examples/echoServer.cpp src/*.cpp -lpthread
 
 clean:
 	rm -rf *.o *.out

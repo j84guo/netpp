@@ -109,7 +109,10 @@ bool net::TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)
 
 long net::TCPConn::recv(char *buf, size_t num)
 {
-	return ::recv(sockDes, buf, num, 0);
+	long ret = ::recv(sockDes, buf, num, 0);
+	if (ret == -1)
+		throw NetError("TCPConn::recv", errno);
+	return ret;
 }
 
 long net::TCPConn::recvAll(vector<char> &buf)
@@ -122,7 +125,7 @@ long net::TCPConn::recvAll(vector<char> &buf)
 		if (ret == -1) {
 			if (errno == EINTR)
 				continue;
-			return -1;
+			throw NetError("TCPConn::recvAll", errno);
 		} else if (!ret) {
 			break;
 		}
@@ -131,9 +134,20 @@ long net::TCPConn::recvAll(vector<char> &buf)
 	return num;
 }
 
+vector<char> net::TCPConn::recvAll()
+{
+	vector<char> buf;
+	long num = recvAll(buf);
+	buf.resize(num);
+	return buf;
+}
+
 long net::TCPConn::send(const char *buf, size_t num)
 {
-	return ::send(sockDes, buf, num, 0);
+	long ret = ::send(sockDes, buf, num, 0);
+	if (ret == -1)
+		throw NetError("TCPConn::send", errno);
+	return ret;
 }
 
 long net::TCPConn::sendAll(const char *buf, size_t toSend)
@@ -144,7 +158,7 @@ long net::TCPConn::sendAll(const char *buf, size_t toSend)
 		if (ret == -1) {
 			if (errno == EINTR)
 				continue;
-			return -1;
+			throw NetError("TCPConn::sendAll", errno);
 		}
 		num += ret;
 	}

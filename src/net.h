@@ -1,5 +1,6 @@
 /**
  * Todo:
+ * - Some convenience send/recv methods, e.g. resize vector
  * - Figure out which objects can/cannot be copied/moved
  * - Re-think file descriptor verification/sharing... especially re: shutting
  *   down the connection in a timely manner.
