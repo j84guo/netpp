@@ -19,14 +19,18 @@ using std::vector;
 
 void handleConn(TCPConn conn)
 {
-	vector<char> buf(4096);
-	while (1) {	
-		long num = conn.recv(&buf[0], buf.size());
-		if (!num)
-			break;
-		conn.sendAll(&buf[0], num);
+	try {
+		vector<char> buf(4096);
+		while (1) {	
+			long num = conn.recv(&buf[0], buf.size());
+			if (!num)
+				break;
+			conn.sendAll(&buf[0], num);
+		}
+		cout << "Client disconnected: " << conn.remoteAddr() << '\n';
+	} catch (NetError e) {
+		cerr << e.what() << '\n';
 	}
-	cout << "Client disconnected: " << conn.remoteAddr() << '\n'; 
 }
 
 void echoServer()
