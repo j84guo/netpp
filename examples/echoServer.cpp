@@ -7,7 +7,7 @@
 #include <iostream>
 
 using net::TCPConn;
-using net::TCPServer;
+using net::TCPListener;
 using net::NetError;
 
 using std::cerr;
@@ -35,7 +35,7 @@ void handleConn(TCPConn conn)
 
 void echoServer()
 {
-	TCPServer server("127.0.0.1", "8000");
+	TCPListener server("127.0.0.1", "8000");
 	cout << "Started server: " << server.localAddr() << '\n';
 	while (1) {
 		TCPConn conn = server.accept();

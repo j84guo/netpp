@@ -7,7 +7,7 @@
 #include <iostream>
 
 using net::TCPConn;
-using net::TCPServer;
+using net::TCPListener;
 using net::NetError;
 
 using std::cerr;
@@ -32,17 +32,17 @@ void handleConn(TCPConn conn)
 void demoServer()
 {
 	/*
- 	 * The TCPServer object acquires a socket descriptor, binds to a local IP
+ 	 * The TCPListener object acquires a socket descriptor, binds to a local IP
  	 * address and port (passed to it in the constructor) and listens for
  	 * connection requests.
  	 */ 
-	TCPServer server("127.0.0.1", "8000");
+	TCPListener server("127.0.0.1", "8000");
 	cout << "Started server: " << server.localAddr() << '\n';
 
 	while (1) {
 		/*
 		 * The server accepts a new connection and returns to us a TCPConn
-		 * object to communicate with the client. Note TCPServer::accept blocks
+		 * object to communicate with the client. Note TCPListener::accept blocks
 		 * indefinitely until a connection request is recieved, as expected.
 		 */
 		TCPConn conn = server.accept();

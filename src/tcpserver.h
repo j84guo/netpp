@@ -9,12 +9,12 @@
 namespace net 
 {
 
-class TCPServer
+class TCPListener
 {
  public:
-	TCPServer(const std::string & ip, const std::string & port,
+	TCPListener(const std::string & ip, const std::string & port,
 			bool reBind = true);
-	~TCPServer();
+	~TCPListener();
 
 	TCPConn accept();
 	SockAddr localAddr();

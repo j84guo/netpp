@@ -17,32 +17,32 @@
 using std::string;
 using std::vector;
 
-net::TCPServer::TCPServer(const string & host, const string & port, bool reBind):
+net::TCPListener::TCPListener(const string & host, const string & port, bool reBind):
 	reBind(reBind)
 {
 	if (port == "")
-		throw NetError("TCPServer: Bad port");
+		throw NetError("TCPListener: Bad port");
 	auto res = getAddrInfo(host, port, AF_UNSPEC, SOCK_STREAM, IPPROTO_TCP,
 			AI_PASSIVE);
 	if (res.second)
-		throw NetError("TCPServer: " + gaiStrError(res.second));
+		throw NetError("TCPListener: " + gaiStrError(res.second));
 	if (!bindWithFirst(res.first))
-		throw NetError("TCPServer", errno);
+		throw NetError("TCPListener", errno);
 	if (!listen())
-		throw NetError("TCPServer", errno);
+		throw NetError("TCPListener", errno);
 }
 
-net::TCPServer::~TCPServer()
+net::TCPListener::~TCPListener()
 {
 	close(sockDes);
 }
 
-net::SockAddr net::TCPServer::localAddr()
+net::SockAddr net::TCPListener::localAddr()
 {
 	return local;
 }
 
-bool net::TCPServer::bindWithFirst(vector <struct addrinfo> &infoVec)
+bool net::TCPListener::bindWithFirst(vector <struct addrinfo> &infoVec)
 {
 	for (const auto & info:infoVec) {
 		if (!socket(info.ai_family, info.ai_socktype, info.ai_protocol))
@@ -58,7 +58,7 @@ bool net::TCPServer::bindWithFirst(vector <struct addrinfo> &infoVec)
 	return false;
 }
 
-bool net::TCPServer::socket(int family, int type, int protocol)
+bool net::TCPListener::socket(int family, int type, int protocol)
 {
 	sockDes = ::socket(family, type, protocol);
 	if (sockDes == -1)
@@ -72,12 +72,12 @@ bool net::TCPServer::socket(int family, int type, int protocol)
 	return true;
 }
 
-bool net::TCPServer::listen()
+bool net::TCPListener::listen()
 {
 	return ::listen(sockDes, 32) != -1;
 }
 
-net::TCPConn net::TCPServer::accept()
+net::TCPConn net::TCPListener::accept()
 {
 	SockAddr remote;
 

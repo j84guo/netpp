@@ -22,7 +22,7 @@ using std::string;
 using std::vector;
 
 /*
- * For use by TCPServer::accept(). We still verify that the file descriptor is
+ * For use by TCPListener::accept(). We still verify that the file descriptor is
  * valid in order to prevent objects existing in an invalid state.
  */
 net::TCPConn::TCPConn(int sockDes, const SockAddr &remote):
@@ -60,7 +60,7 @@ net::TCPConn::TCPConn(const TCPConn &toCopy):
 }
 
 /*
- * Move construction is helpful because TCPServer::accept can now return a
+ * Move construction is helpful because TCPListener::accept can now return a
  * TCPConn object (which is semantically clear and convenient) without having
  * to duplicate the file descriptor in the copy constructor. Instead, we
  * "steal" it.
