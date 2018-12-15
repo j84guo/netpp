@@ -39,6 +39,7 @@ void echoServer()
 	cout << "Started server: " << server.localAddr() << '\n';
 	while (1) {
 		TCPConn conn = server.accept();
+		cout << "Accepting client: " << conn.remoteAddr() << '\n';
 		thread t(handleConn, move(conn));
 		t.detach();
 	}
