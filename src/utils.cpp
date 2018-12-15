@@ -38,7 +38,7 @@ string net::gaiStrError(int err)
     return gai_strerror(err);
 }
 
-string net::addrFamilyString(int fam)
+string net::strAddrFam(int fam)
 {
 	switch (fam) {
 	case AF_INET:

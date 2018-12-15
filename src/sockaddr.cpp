@@ -74,7 +74,7 @@ socklen_t *net::SockAddr::saLenPtr()
 string net::SockAddr::toString() const
 {
     stringstream buf;
-    buf << "<SockAddr: family=" << addrFamilyString(getFamily()) << ", IP="
+    buf << "<SockAddr: family=" << strAddrFam(getFamily()) << ", IP="
 			<< getIP() << ", port=" << getPort() << ">";
     return buf.str();
 }

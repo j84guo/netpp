@@ -27,7 +27,7 @@ std::string strError(int err);
 std::string gaiStrError(int err);
 
 /* Returns a string for the address gamily, e.g. AF_INET6 -> Ipv6 */
-std::string addrFamilyString(int fam);
+std::string strAddrFam(int fam);
 
 /* Returns a structure which can be passed as a hint to getaddrinfo(), using
    the specified family, type, protocol and flags.
