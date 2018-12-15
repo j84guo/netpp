@@ -1,5 +1,7 @@
 /**
  * Todo:
+ * - TCPConn should have an option to disable DNS lookups, e.g. for numeric
+ *   host argument
  * - Some convenience send/recv methods, e.g. resize vector
  * - Figure out which objects can/cannot be copied/moved
  * - Re-think file descriptor verification/sharing... especially re: shutting

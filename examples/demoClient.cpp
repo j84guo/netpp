@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	}
 
 	try {
-		demoClient(argv[1], argv[2]);
+		demoClient("123.456.789", argv[2]);
 	} catch (NetError &e) {
 		cerr << e.what() << '\n';
 		return 1;

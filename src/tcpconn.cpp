@@ -33,7 +33,7 @@ net::TCPConn::TCPConn(int sockDes, const SockAddr &remote):
 		throw NetError("TCPConn", errno);
 }
 
-/* DNS lookup, if necessary, then connect. */
+/* DNS lookup, then connect. */
 net::TCPConn::TCPConn(const string &host, const string &port):
 	sockDes(-1)
 {
