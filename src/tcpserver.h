@@ -29,6 +29,6 @@ class TCPServer
 	SockAddr local;
 };
 
-}
+} /* namespace net */
 
 #endif

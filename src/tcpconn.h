@@ -40,6 +40,6 @@ private:
 	SockAddr remote;
 };
 
-}
+} /* namespace net */
 
 #endif

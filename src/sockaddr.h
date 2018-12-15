@@ -29,6 +29,6 @@ private:
 
 std::ostream& operator<<(std::ostream &out, const SockAddr &addr);
 
-}
+} /* namespace net */
 
 #endif

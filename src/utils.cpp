@@ -52,8 +52,7 @@ string net::addrFamilyString(int fam)
 
 struct addrinfo net::addrInfoHints(int family, int type, int protocol, int flags)
 {
-	struct addrinfo hints;
-	memset(&hints, 0, sizeof(struct addrinfo));
+	struct addrinfo hints = {0};
 	hints.ai_family = family;
 	hints.ai_socktype = type;
 	hints.ai_protocol = protocol;

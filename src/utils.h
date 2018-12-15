@@ -44,8 +44,6 @@ std::pair<std::vector<struct addrinfo>, int> getAddrInfo(
         const std::string &host, const std::string &port, int family, int type,
         int protocol, int flags = 0);
 
-
-}
-
+} /* namespace net */
 
 #endif
