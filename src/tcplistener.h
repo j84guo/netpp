@@ -1,5 +1,5 @@
-#ifndef TCPSERVER_H
-#define TCPSERVER_H
+#ifndef TCPLISTENER_H
+#define TCPLISTENER_H
 
 #include "tcpconn.h"
 
