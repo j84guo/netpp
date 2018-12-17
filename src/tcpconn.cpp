@@ -57,6 +57,8 @@ net::TCPConn::TCPConn(const TCPConn &toCopy):
 	remote(toCopy.remote)
 {
 	sockDes = dup(toCopy.sockDes);
+	if (sockDes == -1)
+		throw NetError("TCPConn", errno);
 }
 
 /*
