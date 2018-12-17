@@ -83,7 +83,7 @@ net::TCPConn net::TCPListener::accept()
 
 	int connDes = ::accept(sockDes, remote.saPtr(), remote.saLenPtr());
 	if (connDes == -1)
-		throw NetError("accept", errno);
+		throw NetError("TCPListener::accept", errno);
 
 	return TCPConn(connDes, remote);
 }
