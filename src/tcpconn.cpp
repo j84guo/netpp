@@ -87,9 +87,14 @@ net::TCPConn::~TCPConn()
 		close(sockDes);
 }
 
-net::SockAddr net::TCPConn::remoteAddr()
+net::SockAddr net::TCPConn::remoteAddr() const
 {
 	return remote;
+}
+
+int net::TCPConn::getSockDes() const
+{
+	return sockDes;
 }
 
 bool net::TCPConn::connectWithFirst(vector<struct addrinfo> &infoVec)

@@ -32,7 +32,10 @@ public:
 	long sendAll(const char *buf, std::size_t num);
 
 	/* Get a copy of the remote socket's address */
-	SockAddr remoteAddr();
+	SockAddr remoteAddr() const;
+
+	/* Get a copy of the underlying socket descriptor */
+	int getSockDes() const;
 
 private:
 	bool connectWithFirst(std::vector<struct addrinfo> &infoVec);

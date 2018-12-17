@@ -37,9 +37,14 @@ net::TCPListener::~TCPListener()
 	close(sockDes);
 }
 
-net::SockAddr net::TCPListener::localAddr()
+net::SockAddr net::TCPListener::localAddr() const
 {
 	return local;
+}
+
+int net::TCPListener::getSockDes() const
+{
+	return sockDes;
 }
 
 bool net::TCPListener::bindWithFirst(vector <struct addrinfo> &infoVec)

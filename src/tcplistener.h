@@ -17,7 +17,13 @@ class TCPListener
 	~TCPListener();
 
 	TCPConn accept();
-	SockAddr localAddr();
+	SockAddr localAddr() const;
+	int getSockDes() const;
+
+	/* Forbid copy, move, assign */
+	TCPListener(const TCPListener&) = delete;
+	TCPListener(TCPListener&&) = delete;
+	TCPListener &operator=(const TCPListener&) = delete;
 
  private:
 	bool bindWithFirst(std::vector<struct addrinfo> &infoVec);
