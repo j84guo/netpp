@@ -25,8 +25,12 @@ void handleConn(TCPConn conn)
 	 * cout.
 	 */
 	cout << "Handling client: " << conn.remoteAddr() << '\n';
-	vector<char> buf = conn.recvAll();
-	cout << string(buf.begin(), buf.end());
+	try {
+		vector<char> buf = conn.recvAll();
+		cout << string(buf.begin(), buf.end());
+	} catch (NetError &e) {
+		cerr << e.what() << '\n';
+	}
 }
 
 void demoServer()
