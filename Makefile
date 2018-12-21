@@ -8,9 +8,9 @@ uninstall:
 
 # Also kind of sketchy
 demo:
-	g++ -o demoClient.out -Wall -std=c++17 -I src/ examples/demoClient.cpp src/*.cpp -lpthread
-	g++ -o demoServer.out -Wall -std=c++17 -I src/ examples/demoServer.cpp src/*.cpp -lpthread
-	g++ -o echoServer.out -Wall -std=c++17 -I src/ examples/echoServer.cpp src/*.cpp -lpthread
+	g++ -o demo_client.out -Wall -std=c++17 -I src/ examples/demo_client.cpp -lnetpp -lpthread
+	g++ -o demo_server.out -Wall -std=c++17 -I src/ examples/demo_server.cpp -lnetpp -lpthread
+	g++ -o echo_server.out -Wall -std=c++17 -I src/ examples/echo_server.cpp -lnetpp -lpthread
 
 clean:
 	rm -rf *.o *.out
