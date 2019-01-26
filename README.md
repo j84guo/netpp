@@ -21,20 +21,15 @@ namespace. The snippet bellow shows usage of ```class TCPConn```.
 #include <iostream>
 #include <vector>
 
-using net::TCPConn;
-using std::cout;
-using std::string;
-using std::vector;
-
 int main()
 {
-	string req = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
+	std::string req = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 
-	TCPConn conn("google.ca", "80");
+	net::TCPConn conn("google.ca", "80");
 	conn.sendAll(req.c_str(), req.size());
 
-	vector<char> buf = conn.recvAll();
-	cout << string(buf.begin(), buf.end()) << '\n';
+	std::vector<char> buf = conn.recvAll();
+	std::cout << string(buf.begin(), buf.end()) << '\n';
 }
 ```
 
